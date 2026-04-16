@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ingredient Library | Admin Studio</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#6f7a6b",
+                        "surface": "#f8faf8",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#becab9",
+                        "on-surface-variant": "#3f4a3c",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#27308a",
+                        "secondary-container": "#959efd",
+                        "surface-container": "#eceeec",
+                        "surface-dim": "#d8dad9",
+                        "surface-container-low": "#f2f4f2",
+                        "background": "#f8faf8",
+                        "surface-container-highest": "#e1e3e1",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#006e1c",
+                        "surface-container-high": "#e6e9e7",
+                        "on-background": "#191c1b",
+                        "on-secondary-fixed-variant": "#343d96",
+                        "on-secondary-fixed": "#000767",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffaaf7",
+                        "tertiary": "#a700ac",
+                        "on-primary-container": "#003c0b",
+                        "tertiary-container": "#f656f6",
+                        "inverse-on-surface": "#eff1ef",
+                        "surface-variant": "#e1e3e1",
+                        "on-tertiary-container": "#5f0062",
+                        "on-primary-fixed": "#002204",
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "primary-fixed-dim": "#78dc77",
+                        "secondary-fixed": "#e0e0ff",
+                        "on-primary-fixed-variant": "#005313",
+                        "primary": "#006e1c",
+                        "secondary": "#4c56af",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#94f990",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#4caf50",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#380039",
+                        "inverse-surface": "#2e3130",
+                        "on-tertiary-fixed-variant": "#800084",
+                        "inverse-primary": "#78dc77",
+                        "on-surface": "#191c1b",
+                        "tertiary-fixed": "#ffd7f7",
+                        "surface-bright": "#f8faf8",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Navigation Drawer (SideNavBar) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200/50 dark:border-zinc-800/50 flex flex-col h-full p-4 space-y-2 z-40">
+<div class="mb-8 px-2">
+<h1 class="text-lg font-bold text-zinc-900 dark:text-zinc-50">Admin Studio</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Editorial Control</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300 hover:translate-x-1 font-['Inter'] text-sm font-medium tracking-wide" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300 hover:translate-x-1 font-['Inter'] text-sm font-medium tracking-wide" href="#">
+<span class="material-symbols-outlined" data-icon="restaurant_menu">restaurant_menu</span>
+                Recipe Manager
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-semibold rounded-lg transition-all duration-300 hover:translate-x-1 font-['Inter'] text-sm tracking-wide" href="#">
+<span class="material-symbols-outlined" data-icon="liquor">liquor</span>
+                Ingredient Library
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300 hover:translate-x-1 font-['Inter'] text-sm font-medium tracking-wide" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                Nutrition Analytics
+            </a>
+</nav>
+<div class="pt-4 border-t border-zinc-200/50">
+<a class="flex items-center gap-3 px-3 py-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300 hover:translate-x-1 font-['Inter'] text-sm font-medium tracking-wide" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300 hover:translate-x-1 font-['Inter'] text-sm font-medium tracking-wide" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+                Support
+            </a>
+<div class="mt-6 p-3 flex items-center gap-3 bg-white rounded-xl shadow-sm">
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full bg-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYDzkulbYUwSqY7F4hhxbZsBluonap8ZG3bD3SkEV9RH1Nq4N_u1YcOYB0V1ffACoKrKur1v3iSUDMLgqntdWXppn8uTx5EpUE10CJQYrpzO-Yv7UzDcrkd9tNlZjDsUUPtFD_5pnZgwP0QMsCHsK_fLi-iM7EZep6rggrifaZDj7lxRZPlWCCKgNPKrB4mHewJJv0Tob9dUH1B4gJzxDNzUVfcZy4Psc1rBDBYvIVN3iCOQroXtB1Pfgz0GJlCWtM8tdXmaCmNOk"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold truncate text-on-surface">Alex Rivera</p>
+<p class="text-[10px] text-on-surface-variant">Lead Editor</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- Top App Bar Space -->
+<header class="h-16 flex items-center justify-between px-8 bg-surface/70 backdrop-blur-xl sticky top-0 z-30">
+<div>
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span>Admin</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-on-surface font-semibold">Ingredient Library</span>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-6 w-[1px] bg-outline-variant/30 mx-2"></div>
+<button class="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-md shadow-lg hover:brightness-110 transition-all font-medium text-sm">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Add New Ingredient
+                </button>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-8 max-w-7xl mx-auto space-y-8">
+<!-- Editorial Header Section -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-2xl">
+<h2 class="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Master Ingredients</h2>
+<p class="text-on-surface-variant leading-relaxed">
+                        Curate and maintain the definitive source of nutritional data. This library serves as the foundation for all recipe calculations and meal plans across the NutriAtrium ecosystem.
+                    </p>
+</div>
+<div class="flex gap-3">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2.5 bg-surface-container-low border-none rounded-md focus:ring-2 focus:ring-primary/40 text-sm w-64 placeholder:text-zinc-400" placeholder="Search ingredients..." type="text"/>
+</div>
+<button class="px-4 py-2.5 bg-surface-container-high text-on-surface rounded-md hover:bg-surface-container-highest transition-colors flex items-center gap-2 text-sm font-medium">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                        Filters
+                    </button>
+</div>
+</section>
+<!-- Tonal Data Table Container -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/30">
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Ingredient Name</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Category</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Unit of Measure</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y-0">
+<!-- Table Row 1 -->
+<tr class="bg-surface hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="close up macro shot of fresh vibrant green broccoli florets on a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAo4Kz9xn8ulyYjYYK7QqdDeOUK1qnaTsb887J8TN3m0N3xjhNYi_2piHAil8RK6HR2dWvM6P-MA_1QiBrKPL7jXP4mQa9LEWOAsGGnIFHvPmnMAYwpP-pBFj9NHFTV7Fu5YqJwxO25xDhVmgXcPdVJjy8wsvY4vkoUNtLpX4xjzWN9CaT0bMBdEfEBiuKq2ZCdbJQaLcskc7S7U4h3m64vNqFyATaZ7dMIgth-lyhKWBxzP3kIFzj_hbymVQmMBN5zCVLM8Zvbes"/>
+</div>
+<div>
+<div class="font-semibold text-on-surface">Organic Broccoli</div>
+<div class="text-[10px] text-on-surface-variant">ID: ING-00124</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed-dim text-on-secondary-fixed-variant text-[10px] font-bold uppercase tracking-wider">Produce</span>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm font-medium text-on-surface">Grams (g)</div>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-md text-on-surface-variant" title="Edit">
+<span class="material-symbols-outlined text-lg">edit_note</span>
+</button>
+<button class="p-2 hover:bg-error-container hover:text-on-error-container rounded-md text-on-surface-variant" title="Remove">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Table Row 2 -->
+<tr class="bg-surface-container-low/40 hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="studio lighting on a glass of fresh white milk against a clean minimalist kitchen background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8T1RGjFC9OzMsr4DQpji-e_cYpF2HxCmt3kOnSPj9wyID9twQJFgnKWNyDgY_srljgEobztSaQNjD9TsnDCi2iHFzE1V8GAlJFTxVg_nTvb0BS4mgOhSlu4ObZY-uxSBPkHKLthxZ2k5A9EkBIcyU9VXVWgtW_hVUsCz4C4vDcejG6DsG8kkP_s8bJo986r6gH2OQ8sNj8Vw5f0hz_6qE5qN1UJenIDtS1HAYDMQpvsw2h_lG5ptSfkHHHxLKtYeQN8NUCnl-Ei4"/>
+</div>
+<div>
+<div class="font-semibold text-on-surface">Greek Yogurt, Plain</div>
+<div class="text-[10px] text-on-surface-variant">ID: ING-00482</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold uppercase tracking-wider">Dairy</span>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm font-medium text-on-surface">Milliliters (ml)</div>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-md text-on-surface-variant" title="Edit">
+<span class="material-symbols-outlined text-lg">edit_note</span>
+</button>
+<button class="p-2 hover:bg-error-container hover:text-on-error-container rounded-md text-on-surface-variant" title="Remove">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Table Row 3 -->
+<tr class="bg-surface hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="raw organic chicken breast on a light marble cutting board with soft overhead lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGQO5D3ss4pjLSn4Lk8xU5WtFubtFvzlx-I8h6K-3HNSWRESMaDISXCfYTxohS0VSAZX6l4lCwJz1WY2S8k6NmkVSvaiGqi8m64UVISh3burxQOAVeJcpoSeZrnUq_uAnWEjlVb7fQxLO1R-uY4DuP0B3iaoVZoT6cYzMfdU4F6BkV1lZwrtWAvSi7C3xFD3DGxzCoSivXam6FOs-lSXt8LRw_DHZm2B9NrPEJ90Nwx-9o6SR3Scp2cm5g5Cn-f7CGEzFTI-cnHRs"/>
+</div>
+<div>
+<div class="font-semibold text-on-surface">Free-Range Chicken Breast</div>
+<div class="text-[10px] text-on-surface-variant">ID: ING-00291</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-bold uppercase tracking-wider">Protein</span>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm font-medium text-on-surface">Kilograms (kg)</div>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-md text-on-surface-variant" title="Edit">
+<span class="material-symbols-outlined text-lg">edit_note</span>
+</button>
+<button class="p-2 hover:bg-error-container hover:text-on-error-container rounded-md text-on-surface-variant" title="Remove">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Table Row 4 -->
+<tr class="bg-surface-container-low/40 hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="crisp red apple with water droplets on a white surface with bright airy lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW4sJkojZjPNd__UwRNWXxYSFAs7whT3nB-MBMNQn9O2xZkRaVvevcX8CoIlryUTlJyUqYzjfJlQul6-wGmfhqnCmtoPnwMKJkqfAngasmb-N3AMYU3EEqhYcgHgHNYZGEU0pcB_2v6Y5pzMb65CdNP_oIgJQscvIIhkxlzHcaUedEwflIH6Z5Bw32o9ONQY00S04OoWCg_1robJZTPk65qkZuz7tURMZDetWkySS1SjvmphJ2Z6Rh8LXtAPfq-v9S1ksj5iYFo4c"/>
+</div>
+<div>
+<div class="font-semibold text-on-surface">Honeycrisp Apple</div>
+<div class="text-[10px] text-on-surface-variant">ID: ING-00155</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed-dim text-on-secondary-fixed-variant text-[10px] font-bold uppercase tracking-wider">Produce</span>
+</td>
+<td class="px-6 py-5">
+<div class="text-sm font-medium text-on-surface">Piece (pc)</div>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-md text-on-surface-variant" title="Edit">
+<span class="material-symbols-outlined text-lg">edit_note</span>
+</button>
+<button class="p-2 hover:bg-error-container hover:text-on-error-container rounded-md text-on-surface-variant" title="Remove">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Table Footer/Pagination -->
+<div class="px-6 py-4 bg-surface-container-low/20 flex items-center justify-between">
+<p class="text-xs text-on-surface-variant">Showing <span class="font-bold text-on-surface">4</span> of <span class="font-bold text-on-surface">1,248</span> ingredients</p>
+<div class="flex items-center gap-2">
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex items-center gap-1">
+<span class="w-8 h-8 flex items-center justify-center rounded-md bg-primary text-on-primary text-xs font-bold shadow-sm">1</span>
+<span class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container text-on-surface text-xs font-medium cursor-pointer">2</span>
+<span class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container text-on-surface text-xs font-medium cursor-pointer">3</span>
+</div>
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dashboard Summary Grid (Asymmetric Bento Style) -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Large Highlight Card -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-high p-8 rounded-xl flex flex-col justify-between overflow-hidden relative group">
+<div class="relative z-10">
+<h3 class="text-2xl font-bold tracking-tight mb-2">Library Growth</h3>
+<p class="text-on-surface-variant text-sm max-w-sm mb-8">You've added 42 new ingredients this week. Most additions are currently in the <span class="text-primary font-bold">Produce</span> category.</p>
+<div class="flex gap-12">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Total Items</p>
+<p class="text-4xl font-extrabold text-primary tracking-tighter">1,248</p>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Active Recipes</p>
+<p class="text-4xl font-extrabold text-on-surface tracking-tighter">312</p>
+</div>
+</div>
+</div>
+<!-- Aesthetic abstract element -->
+<div class="absolute right-0 top-0 w-64 h-full bg-gradient-to-l from-primary-container/20 to-transparent flex items-center justify-center">
+<span class="material-symbols-outlined text-[160px] opacity-10 text-primary -rotate-12 translate-x-12" data-icon="liquor">liquor</span>
+</div>
+</div>
+<!-- Small Info Cards -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<span class="material-symbols-outlined p-2 rounded-lg bg-secondary-fixed text-on-secondary-fixed">warning</span>
+<span class="text-[10px] font-bold text-on-surface-variant">Action Required</span>
+</div>
+<p class="font-bold text-sm mb-1">12 Missing Units</p>
+<p class="text-xs text-on-surface-variant">These ingredients cannot be used in recipes until units are defined.</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<span class="material-symbols-outlined p-2 rounded-lg bg-primary-fixed text-on-primary-fixed">verified</span>
+<span class="text-[10px] font-bold text-on-surface-variant">System Status</span>
+</div>
+<p class="font-bold text-sm mb-1">API Sync Active</p>
+<p class="text-xs text-on-surface-variant">Nutrition database synced successfully 14 minutes ago.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Quick Action Button (Suppressed on Backoffice usually, but as per instructions: "If primary purpose aligns") -->
+<!-- Removed for focused backoffice table view as per suppression rule: "suppress the FAB on Settings, Profile, Details, and Transactional screens" -->
+</body></html>
