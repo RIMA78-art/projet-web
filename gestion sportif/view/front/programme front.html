@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AthleticOS | Performance Lab Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#eceeec",
+                    "secondary-fixed-dim": "#bdc2ff",
+                    "secondary-container": "#959efd",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "outline": "#6f7a6b",
+                    "on-primary": "#ffffff",
+                    "background": "#f8faf8",
+                    "tertiary-fixed-dim": "#ffaaf7",
+                    "secondary": "#4c56af",
+                    "on-tertiary-fixed-variant": "#800084",
+                    "on-secondary-fixed-variant": "#343d96",
+                    "primary-container": "#4caf50",
+                    "inverse-on-surface": "#eff1ef",
+                    "secondary-fixed": "#e0e0ff",
+                    "tertiary-fixed": "#ffd7f7",
+                    "tertiary-container": "#f656f6",
+                    "inverse-surface": "#2e3130",
+                    "outline-variant": "#becab9",
+                    "on-error": "#ffffff",
+                    "on-background": "#191c1b",
+                    "surface": "#f8faf8",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#f8faf8",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#78dc77",
+                    "surface-tint": "#006e1c",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#a700ac",
+                    "on-surface-variant": "#3f4a3c",
+                    "primary": "#006e1c",
+                    "surface-container-high": "#e6e9e7",
+                    "on-primary-fixed-variant": "#005313",
+                    "surface-dim": "#d8dad9",
+                    "on-primary-container": "#003c0b",
+                    "on-tertiary-container": "#5f0062",
+                    "on-surface": "#191c1b",
+                    "surface-variant": "#e1e3e1",
+                    "on-primary-fixed": "#002204",
+                    "on-tertiary-fixed": "#380039",
+                    "surface-container-low": "#f2f4f2",
+                    "on-secondary-container": "#27308a",
+                    "primary-fixed": "#94f990",
+                    "inverse-primary": "#78dc77",
+                    "surface-container-highest": "#e1e3e1",
+                    "on-secondary-fixed": "#000767",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .glass-nav { backdrop-filter: blur(24px); }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="h-screen w-64 fixed left-0 top-0 z-40 bg-zinc-50 dark:bg-zinc-900 flex flex-col p-4 gap-2 border-r border-zinc-200/50 dark:border-zinc-800/50">
+<div class="mb-8 px-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+</div>
+<div>
+<h1 class="font-manrope font-extrabold text-lg leading-tight">Performance Lab</h1>
+<p class="text-[10px] uppercase tracking-widest text-zinc-500">Elite Management</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-zinc-800 text-emerald-700 dark:text-emerald-400 rounded-lg shadow-sm font-bold hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span class="font-inter text-xs uppercase tracking-widest">Programs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 rounded-lg hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="directions_run">directions_run</span>
+<span class="font-inter text-xs uppercase tracking-widest">Exercises</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 rounded-lg hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-inter text-xs uppercase tracking-widest">Athletes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 rounded-lg hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="exercise">exercise</span>
+<span class="font-inter text-xs uppercase tracking-widest">Equipment</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 rounded-lg hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-inter text-xs uppercase tracking-widest">Staff</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-zinc-200/50 pt-4 space-y-1">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider shadow-md hover:scale-[1.02] active:opacity-80 transition-all mb-4">
+                Create New Program
+            </button>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-inter text-xs uppercase tracking-widest">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-error hover:bg-error/10 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-inter text-xs uppercase tracking-widest">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar (Authority: JSON) -->
+<header class="fixed top-0 right-0 left-64 z-50 h-16 glass-nav bg-white/70 dark:bg-zinc-950/70 flex justify-between items-center px-6 tonal-transition">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black tracking-tight text-emerald-900">AthleticOS</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-emerald-700 dark:text-emerald-400 font-semibold border-b-2 border-emerald-600 py-1 transition-colors" href="#">Dashboard</a>
+<a class="text-zinc-500 dark:text-zinc-400 font-medium hover:text-emerald-600 transition-colors" href="#">Analytics</a>
+<a class="text-zinc-500 dark:text-zinc-400 font-medium hover:text-emerald-600 transition-colors" href="#">Schedule</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="absolute inset-y-0 left-3 flex items-center text-zinc-400">
+<span class="material-symbols-outlined text-sm" data-icon="search">search</span>
+</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-sm w-64 focus:ring-2 focus:ring-primary/40 transition-all" placeholder="Search resources..." type="text"/>
+</div>
+<button class="p-2 text-zinc-600 hover:bg-zinc-100 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-zinc-600 hover:bg-zinc-100 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border-2 border-primary/20">
+<img alt="Administrator Profile" data-alt="professional portrait of a sports management administrator in a clean modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdqJv-eLnKZThuSFhbQ3lAgK_sffyzl-6JylHpUd1ZzWN_TmutYyDJoy8FzWmnAKfXvJn6YTJ3HojtOHOAVd4Xf4kOECPE7HtztasOnTYPLyDB5Q-DiAl9eeftL2T296TnOtlA_8uD3gt8ray7MvZgw3QigCjQZ6ZrWP0HJ-hVBcDDT0hZwy-oExZzUJODDmoqwgUtKG8mQlId0QbiXK1rGeySG_vrVuiryMiRNrfy9z6UZEI7QGrDsSyaw34axWJJ1jojUe6R1Po"/>
+</div>
+</div>
+</header>
+<div class="pt-24 px-8 pb-12">
+<!-- Hero Header Section -->
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="font-headline text-5xl font-extrabold tracking-tight text-on-surface mb-2">Program Catalog</h2>
+<p class="text-on-surface-variant max-w-lg font-body leading-relaxed">Design, monitor, and refine elite athletic training structures from a centralized command center.</p>
+</div>
+<div class="flex gap-3">
+<div class="flex bg-surface-container-high p-1 rounded-lg">
+<button class="px-4 py-2 bg-surface-container-lowest shadow-sm rounded-md text-xs font-bold tracking-wider uppercase text-primary">All Programs</button>
+<button class="px-4 py-2 text-xs font-bold tracking-wider uppercase text-on-surface-variant hover:text-primary transition-colors">Exercises Library</button>
+</div>
+</div>
+</div>
+<!-- Bento Stats / Quick Filters -->
+<div class="grid grid-cols-12 gap-6 mb-12">
+<div class="col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-sm flex items-center justify-between overflow-hidden relative group">
+<div class="z-10">
+<h3 class="text-zinc-400 font-label text-xs uppercase tracking-[0.2em] mb-4">Total Active Volume</h3>
+<div class="flex items-baseline gap-4">
+<span class="text-6xl font-headline font-black text-primary">42</span>
+<span class="text-emerald-600 font-bold flex items-center">
+<span class="material-symbols-outlined" data-icon="arrow_upward">arrow_upward</span> 12%
+                            </span>
+</div>
+</div>
+<div class="absolute right-0 top-0 h-full w-1/2 opacity-10 grayscale group-hover:grayscale-0 transition-all duration-700">
+<img alt="Athletic background" class="h-full w-full object-cover" data-alt="close up of Olympic running track lanes with high contrast lighting and sharp focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCywcqIL8pthBs3htvvHfBJMWClqHwkw-OqBDdT-NXTG1e3Aesn5hRj_N0i0QmuLlNxBBdkAAlRH0o7fWpyex6JbFvraTu4Zb7Kb014NwVxzG7Tkx-UKGzucIltuGX-Y0rq2ycyfB34DqsuMTGtoudNPHZQ4Jnflh-AvS2ZLJVEQn6z23L8rdfIfG9XTkdY7OTnusavuWXeGC-HyXA85EeENCLEEKqMUd-smTn65t1NbP-0zLHtdwV1Tf7MsdKzA6HVT09NShM5hCM"/>
+</div>
+</div>
+<div class="col-span-4 bg-tertiary-container/10 border border-tertiary-container/20 rounded-xl p-8 flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded-lg bg-tertiary text-white flex items-center justify-center mb-4">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<h4 class="font-headline font-bold text-lg leading-tight">Drafts Pending Review</h4>
+</div>
+<p class="text-4xl font-headline font-black text-tertiary">08</p>
+</div>
+</div>
+<!-- Program Table Section -->
+<section class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+<div class="p-6 flex justify-between items-center bg-zinc-50/50">
+<div class="flex gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+<span class="text-xs font-bold uppercase tracking-wider">Difficulty</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-sm" data-icon="calendar_today">calendar_today</span>
+<span class="text-xs font-bold uppercase tracking-wider">Last Edited</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-zinc-100 rounded-lg transition-all text-zinc-400">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</button>
+<button class="p-2 bg-white shadow-sm border border-zinc-100 rounded-lg transition-all text-primary">
+<span class="material-symbols-outlined" data-icon="reorder">reorder</span>
+</button>
+</div>
+</div>
+<table class="w-full text-left">
+<thead>
+<tr class="bg-zinc-50/50">
+<th class="px-8 py-4 text-[10px] font-black uppercase tracking-[0.1em] text-zinc-400">Program Name</th>
+<th class="px-8 py-4 text-[10px] font-black uppercase tracking-[0.1em] text-zinc-400">Status</th>
+<th class="px-8 py-4 text-[10px] font-black uppercase tracking-[0.1em] text-zinc-400">Duration</th>
+<th class="px-8 py-4 text-[10px] font-black uppercase tracking-[0.1em] text-zinc-400">Intensity</th>
+<th class="px-8 py-4 text-[10px] font-black uppercase tracking-[0.1em] text-zinc-400 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-zinc-50">
+<tr class="group hover:bg-zinc-50/50 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-zinc-100 overflow-hidden">
+<img alt="Program" data-alt="fitness weights and equipment in a high-end commercial gym setting with soft bokeh background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoPQRStXFtgdYnPTelb011eQKyAh8n4CP3r5S7L01LuCVvMzDOgVBPNQt5nP5UerUDL7aqzBVYyUEiwa-Ab3qTsNevpw4qDSoXL7ovz5XY6xH21dFSV_dIs15Y5ZWE-yE_lTfaISq-Ebq212jI48P7iiVA5Ci9oUykeytsBEW7d3TFlG2deIu6302U_T0FsVGv9cWmzjjo0SikSIAD5q_4DMHU9LsiZOzNMp2Cy_rCEb4SdprVS0m2MNiQlMU3CJvqd9X4a7_J95E"/>
+</div>
+<div>
+<span class="block font-bold text-on-surface">Hypertrophy Elite III</span>
+<span class="text-xs text-zinc-500">Updated 2 days ago</span>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                </span>
+</td>
+<td class="px-8 py-6 text-sm font-medium text-zinc-600">12 Weeks</td>
+<td class="px-8 py-6">
+<div class="flex gap-1">
+<span class="w-4 h-1.5 rounded-full bg-primary"></span>
+<span class="w-4 h-1.5 rounded-full bg-primary"></span>
+<span class="w-4 h-1.5 rounded-full bg-primary"></span>
+<span class="w-4 h-1.5 rounded-full bg-zinc-200"></span>
+<span class="w-4 h-1.5 rounded-full bg-zinc-200"></span>
+</div>
+</td>
+<td class="px-8 py-6 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-zinc-400 hover:text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="p-2 text-zinc-400 hover:text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+<button class="p-2 text-zinc-400 hover:text-error transition-all"><span class="material-symbols-outlined text-lg" data-icon="delete">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-zinc-50/50 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-zinc-100 overflow-hidden">
+<img alt="Program" data-alt="professional athlete sprinting on track with dramatic sunlight and sharp muscle definition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA55ZZN99MeayeD9BTx3favtIU5GKzTM4xf6wbSWR3EdKderY4pb9K1sFijczyRsa5uBj37jKTceJKIzK8SQuyl2XYSUAsOiXPS1mIM0hgb3h30sXFxhM9hiMM7BwOKBFAPZC1eG73eJcZOK2pb1WugaDqoJcb6_NYZJaaqHV4G4v1vd73PbZBnQwqooJOrlS7nXlMqSWHxCbXV52gVOEx0yD44F5yjBJT8ymu3hT3kRUmnOXWyNE-raTBUWU2qnjCcllMZrfTKMec"/>
+</div>
+<div>
+<span class="block font-bold text-on-surface">Explosive Power V4</span>
+<span class="text-xs text-zinc-500">Updated 5 days ago</span>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 text-zinc-500 text-[10px] font-black uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span> Draft
+                                </span>
+</td>
+<td class="px-8 py-6 text-sm font-medium text-zinc-600">8 Weeks</td>
+<td class="px-8 py-6">
+<div class="flex gap-1">
+<span class="w-4 h-1.5 rounded-full bg-primary"></span>
+<span class="w-4 h-1.5 rounded-full bg-primary"></span>
+<span class="w-4 h-1.5 rounded-full bg-primary"></span>
+<span class="w-4 h-1.5 rounded-full bg-primary"></span>
+<span class="w-4 h-1.5 rounded-full bg-primary"></span>
+</div>
+</td>
+<td class="px-8 py-6 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-zinc-400 hover:text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="p-2 text-zinc-400 hover:text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+<button class="p-2 text-zinc-400 hover:text-error transition-all"><span class="material-symbols-outlined text-lg" data-icon="delete">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-zinc-50/50 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-zinc-100 overflow-hidden">
+<img alt="Program" data-alt="peaceful yoga studio with bamboo flooring and soft natural light from large windows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw0uea1woTwOnabcDCwToo2AIvxBOOHy8P1p3ZiNbeOVHFHK4Yy3pW1EQ5IwGvjit_pMhGRUFlTdUNIezkrOCt0Qt29NsDEByxQt4gvluj5eVbpO0VesvIm5HlZZMstxwaTuE9OXl_DXj8L_A7vYNCfN760XSfETT5dbZQ7cgW6WrHql0Ajmk4VGtk6vE8oqhjeuDPFiuOVk-AtQJgv0w7SB0yji6cRu52s2iPlKlDFwpnue3g2oVvM_nDeNnWsoFTqMqfP-3Qfxk"/>
+</div>
+<div>
+<span class="block font-bold text-on-surface">Mobility Foundations</span>
+<span class="text-xs text-zinc-500">Updated 1 month ago</span>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900 text-white text-[10px] font-black uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span> Archived
+                                </span>
+</td>
+<td class="px-8 py-6 text-sm font-medium text-zinc-600">4 Weeks</td>
+<td class="px-8 py-6">
+<div class="flex gap-1">
+<span class="w-4 h-1.5 rounded-full bg-primary"></span>
+<span class="w-4 h-1.5 rounded-full bg-zinc-200"></span>
+<span class="w-4 h-1.5 rounded-full bg-zinc-200"></span>
+<span class="w-4 h-1.5 rounded-full bg-zinc-200"></span>
+<span class="w-4 h-1.5 rounded-full bg-zinc-200"></span>
+</div>
+</td>
+<td class="px-8 py-6 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-zinc-400 hover:text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="p-2 text-zinc-400 hover:text-primary transition-all"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+<button class="p-2 text-zinc-400 hover:text-error transition-all"><span class="material-symbols-outlined text-lg" data-icon="delete">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<!-- Exercises Management Independent Section -->
+<section class="mt-20">
+<div class="mb-8 border-b-2 border-zinc-100 pb-4">
+<h3 class="font-headline text-3xl font-bold text-on-surface flex items-center gap-4">
+                        Exercises Library
+                        <span class="text-xs bg-secondary-fixed text-on-secondary-fixed-variant px-3 py-1 rounded-full font-bold">142 TOTAL</span>
+</h3>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Exercise Form Card -->
+<div class="lg:col-span-1">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm sticky top-24">
+<h4 class="font-headline font-bold text-lg mb-6">Quick Register</h4>
+<div class="space-y-6">
+<div>
+<label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-2">Exercise Name</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-sm focus:ring-2 focus:ring-primary/40" placeholder="e.g. Bulgarian Split Squat" type="text"/>
+</div>
+<div>
+<label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-2">Target Muscle</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-sm focus:ring-2 focus:ring-primary/40">
+<option>Quadriceps</option>
+<option>Hamstrings</option>
+<option>Chest (Pectorals)</option>
+<option>Back (Lats/Traps)</option>
+<option>Core</option>
+</select>
+</div>
+<div>
+<label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-2">Equipment</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-sm focus:ring-2 focus:ring-primary/40" placeholder="Dumbbells, Bench" type="text"/>
+</div>
+<button class="w-full bg-primary text-white py-4 rounded-lg font-bold tracking-wider uppercase text-xs shadow-lg hover:shadow-primary/20 hover:scale-[1.01] transition-all">
+                                    Add to Library
+                                </button>
+</div>
+</div>
+</div>
+<!-- Exercises List Grid -->
+<div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Exercise Card 1 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex items-start gap-4 border border-zinc-50 hover:shadow-md transition-all">
+<div class="w-16 h-16 bg-zinc-100 rounded-lg flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="fitness_center">fitness_center</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h5 class="font-bold text-on-surface">Barbell Squat</h5>
+<button class="text-zinc-300 hover:text-primary"><span class="material-symbols-outlined text-sm" data-icon="more_vert">more_vert</span></button>
+</div>
+<div class="flex flex-wrap gap-2 mt-3">
+<span class="text-[10px] font-bold px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded uppercase">Legs</span>
+<span class="text-[10px] font-bold px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded uppercase">Barbell</span>
+</div>
+</div>
+</div>
+<!-- Exercise Card 2 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex items-start gap-4 border border-zinc-50 hover:shadow-md transition-all">
+<div class="w-16 h-16 bg-zinc-100 rounded-lg flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="directions_run">directions_run</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h5 class="font-bold text-on-surface">Weighted Pull-up</h5>
+<button class="text-zinc-300 hover:text-primary"><span class="material-symbols-outlined text-sm" data-icon="more_vert">more_vert</span></button>
+</div>
+<div class="flex flex-wrap gap-2 mt-3">
+<span class="text-[10px] font-bold px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded uppercase">Back</span>
+<span class="text-[10px] font-bold px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded uppercase">Bodyweight +</span>
+</div>
+</div>
+</div>
+<!-- Exercise Card 3 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex items-start gap-4 border border-zinc-50 hover:shadow-md transition-all">
+<div class="w-16 h-16 bg-zinc-100 rounded-lg flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="sports_gymnastics">sports_gymnastics</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h5 class="font-bold text-on-surface">L-Sit Hold</h5>
+<button class="text-zinc-300 hover:text-primary"><span class="material-symbols-outlined text-sm" data-icon="more_vert">more_vert</span></button>
+</div>
+<div class="flex flex-wrap gap-2 mt-3">
+<span class="text-[10px] font-bold px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded uppercase">Core</span>
+<span class="text-[10px] font-bold px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded uppercase">Parallettes</span>
+</div>
+</div>
+</div>
+<!-- Exercise Card 4 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex items-start gap-4 border border-zinc-50 hover:shadow-md transition-all">
+<div class="w-16 h-16 bg-zinc-100 rounded-lg flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="architecture">architecture</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h5 class="font-bold text-on-surface">Dumbbell Flyes</h5>
+<button class="text-zinc-300 hover:text-primary"><span class="material-symbols-outlined text-sm" data-icon="more_vert">more_vert</span></button>
+</div>
+<div class="flex flex-wrap gap-2 mt-3">
+<span class="text-[10px] font-bold px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded uppercase">Chest</span>
+<span class="text-[10px] font-bold px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded uppercase">Dumbbells</span>
+</div>
+</div>
+</div>
+<!-- View More Link -->
+<div class="md:col-span-2 text-center py-6">
+<button class="text-xs font-black uppercase tracking-widest text-primary hover:underline flex items-center gap-2 mx-auto">
+                                View Entire Exercise Database <span class="material-symbols-outlined text-sm" data-icon="east">east</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

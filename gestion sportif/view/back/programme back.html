@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Atrium Front | Gestion Programme Sportif</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-secondary-container": "#27308a",
+                "on-secondary-fixed-variant": "#343d96",
+                "on-secondary": "#ffffff",
+                "on-primary-fixed": "#002204",
+                "secondary": "#4c56af",
+                "surface-container": "#eceeec",
+                "on-tertiary-fixed-variant": "#800084",
+                "outline-variant": "#becab9",
+                "surface-bright": "#f8faf8",
+                "surface-variant": "#e1e3e1",
+                "inverse-on-surface": "#eff1ef",
+                "on-primary-container": "#003c0b",
+                "surface-container-low": "#f2f4f2",
+                "surface-container-lowest": "#ffffff",
+                "surface-dim": "#d8dad9",
+                "on-primary": "#ffffff",
+                "on-background": "#191c1b",
+                "secondary-fixed-dim": "#bdc2ff",
+                "secondary-container": "#959efd",
+                "tertiary": "#a700ac",
+                "primary-fixed-dim": "#78dc77",
+                "error-container": "#ffdad6",
+                "surface": "#f8faf8",
+                "on-tertiary-container": "#5f0062",
+                "on-surface": "#191c1b",
+                "error": "#ba1a1a",
+                "primary": "#006e1c",
+                "outline": "#6f7a6b",
+                "on-error-container": "#93000a",
+                "on-primary-fixed-variant": "#005313",
+                "on-secondary-fixed": "#000767",
+                "background": "#f8faf8",
+                "primary-container": "#4caf50",
+                "on-tertiary": "#ffffff",
+                "on-error": "#ffffff",
+                "primary-fixed": "#94f990",
+                "on-surface-variant": "#3f4a3c",
+                "inverse-primary": "#78dc77",
+                "surface-tint": "#006e1c",
+                "tertiary-fixed-dim": "#ffaaf7",
+                "on-tertiary-fixed": "#380039",
+                "tertiary-fixed": "#ffd7f7",
+                "tertiary-container": "#f656f6",
+                "surface-container-highest": "#e1e3e1",
+                "surface-container-high": "#e6e9e7",
+                "secondary-fixed": "#e0e0ff",
+                "inverse-surface": "#2e3130"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "fontFamily": {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-gradient {
+            background: linear-gradient(135deg, #006e1c 0%, #4caf50 100%);
+        }
+        .vibrant-accent-gradient {
+            background: linear-gradient(135deg, #4caf50 0%, #f656f6 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-sm">
+<div class="flex justify-between items-center px-8 h-20 max-w-screen-2xl mx-auto font-['Manrope'] font-medium">
+<div class="text-2xl font-black text-emerald-700">Atrium Front</div>
+<div class="hidden md:flex items-center space-x-10">
+<a class="text-stone-600 hover:text-emerald-500 transition-all opacity-80 hover:opacity-100" href="#">Home</a>
+<a class="text-emerald-700 border-b-2 border-emerald-600 pb-1 opacity-100" href="#">Programs</a>
+<a class="text-stone-600 hover:text-emerald-500 transition-all opacity-80 hover:opacity-100" href="#">Store</a>
+<a class="text-stone-600 hover:text-emerald-500 transition-all opacity-80 hover:opacity-100" href="#">Articles</a>
+</div>
+<div class="flex items-center space-x-6">
+<div class="hidden lg:flex items-center bg-surface-container-low px-4 py-2 rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm p-0 w-32" placeholder="Search..." type="text"/>
+</div>
+<button class="bg-stone-900 text-white px-6 py-2.5 rounded-md font-bold text-sm hover:opacity-90 transition-all">Sign In</button>
+</div>
+</div>
+</nav>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative h-[819px] flex items-center overflow-hidden bg-surface-bright">
+<div class="absolute inset-0 z-0">
+<img alt="Latest Challenge" class="w-full h-full object-cover opacity-90" data-alt="Cinematic shot of a professional athlete performing a heavy kettlebell swing in a high-end minimalist gym with soft morning sunlight filtering through large windows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnHhSUECo5f-Sj0ap6kbohJg6J4lIu_aKTXZF3KsruaaWdgmCYYhvVcpYsYjMMsXqaw6MjwINKz5L8FQy6w0csVh6L6kwrfHF50ivR64QRJVMBcR_ft2vU4QFtx5viwJv8kCKp1NMbBNj29KGj67KXLZqe3SWzij3lMDagQegSlEEISG49jShC6CXFGXpmzfbA7ZWNGtXl-qmuInSs-7j66IAUsdzOdiUE5Yjha7Jq3xol2bCg5jq1avfaXjvns771n2IK1YlCNeA"/>
+<div class="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-screen-2xl mx-auto px-8 w-full">
+<div class="max-w-2xl">
+<span class="inline-block px-4 py-1.5 rounded-full bg-tertiary-container text-on-tertiary-container text-xs font-bold uppercase tracking-widest mb-6">Latest Challenge</span>
+<h1 class="text-7xl font-black tracking-tighter text-on-surface leading-[0.95] mb-6">
+                        Summer <br/>Peak <span class="text-primary-container">Intensity</span>
+</h1>
+<p class="text-on-surface-variant text-xl max-w-lg mb-8 font-medium">
+                        Elevate your performance with our newest 30-day structural hypertrophy program. Designed for clarity, space, and results.
+                    </p>
+<div class="flex items-center space-x-4">
+<button class="editorial-gradient text-white px-8 py-4 rounded-md font-bold flex items-center group hover:scale-[1.02] transition-transform">
+                            Start Program 
+                            <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<button class="bg-surface-container-lowest text-on-surface px-8 py-4 rounded-md font-bold shadow-sm hover:bg-surface-container transition-colors">
+                            Watch Trailer
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Grid (Subtle) -->
+<section class="bg-surface-container-low py-12">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="flex flex-col">
+<span class="text-3xl font-black text-on-surface">12k+</span>
+<span class="text-sm font-bold uppercase tracking-widest text-on-surface-variant">Active Athletes</span>
+</div>
+<div class="flex flex-col">
+<span class="text-3xl font-black text-on-surface">45</span>
+<span class="text-sm font-bold uppercase tracking-widest text-on-surface-variant">Elite Programs</span>
+</div>
+<div class="flex flex-col">
+<span class="text-3xl font-black text-on-surface">98%</span>
+<span class="text-sm font-bold uppercase tracking-widest text-on-surface-variant">Success Rate</span>
+</div>
+<div class="flex flex-col">
+<span class="text-3xl font-black text-on-surface">24/7</span>
+<span class="text-sm font-bold uppercase tracking-widest text-on-surface-variant">Expert Support</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Programs Grid -->
+<section class="py-24 bg-white">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="flex justify-between items-end mb-16">
+<div>
+<h2 class="text-5xl font-black tracking-tight mb-4">Available Programs</h2>
+<p class="text-on-surface-variant font-medium">Curated sequences for every athletic archetype.</p>
+</div>
+<div class="flex space-x-2">
+<button class="p-3 rounded-full border border-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+<!-- Program Card 1 -->
+<div class="group flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
+<div class="relative h-72 overflow-hidden">
+<img alt="Strength program" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Detailed view of a man lifting heavy iron weights in a dimly lit, high-contrast industrial gym setting with dust motes in the air" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYFiyfQGK_LLv0n4uanUN1NMC-RAglNxEqMqQ5yxFZhGmWguF8FItlBDA1L0J_PHzcB5WaFpkpNaRiJ5v49bSZnO13ntSC-YRjTpNEYOiPcGMPOnbJnI-GJjXSkjMXzHb87vPiCFhfu2gUkSqUu_fxUyr6FolkusI1tvNbXlrjBT93f5WF8y6452iSNC7yCPG39G8KSA8vE6JZXCOthB4UAmVUcT41B7Dz7ZjaBTgOTOYXgOslciKDj-18MU8k3lDFgQf7zKDr8U0"/>
+<div class="absolute top-4 left-4 bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-xs font-bold">Hardcore</div>
+</div>
+<div class="p-8 flex-1 flex flex-col">
+<div class="flex items-center space-x-4 mb-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">schedule</span> 8 Weeks</span>
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">fitness_center</span> 5 days/week</span>
+</div>
+<h3 class="text-2xl font-black mb-4">Metabolic Engine</h3>
+<p class="text-on-surface-variant text-sm mb-8 line-clamp-2">High-intensity functional conditioning designed to maximize caloric burn and increase overall work capacity.</p>
+<div class="mt-auto">
+<button class="w-full py-4 rounded-md font-bold text-white editorial-gradient transition-transform active:scale-95">Voir le programme</button>
+</div>
+</div>
+</div>
+<!-- Program Card 2 -->
+<div class="group flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
+<div class="relative h-72 overflow-hidden">
+<img alt="Mobility program" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Serene yoga studio at sunrise with a professional instructor performing a fluid movement, soft warm lens flare and clean lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTd83x2QjXFUQsKnv1O_dcjKQi7Qc2YmRUfXcVGxemaG4NE4kbJDxJQAvVkcDrZWlMOgWRhxL7qbujh79wMiE5FGX5_G8pIW6di5jiEQCv6905gMTPqFam_ewNxgKxJxmBGTW-EHDxNHfYa-gT50Y2x-JEjTasWOdnokfBotz3Re-rNU5Jd6cSCCaU4AIqEA3u_cHSF-wtUYh-PEYPc7k9KaNmroQ2_W951ecosc97xPUesTCwRsDyoKRz3gw2MSSZ1w2oDPapsDc"/>
+<div class="absolute top-4 left-4 bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-xs font-bold">Intermediate</div>
+</div>
+<div class="p-8 flex-1 flex flex-col">
+<div class="flex items-center space-x-4 mb-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">schedule</span> 4 Weeks</span>
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">self_improvement</span> 3 days/week</span>
+</div>
+<h3 class="text-2xl font-black mb-4">Structural Flow</h3>
+<p class="text-on-surface-variant text-sm mb-8 line-clamp-2">Focus on mobility, core stability and postural alignment. Perfect for recovery or foundational work.</p>
+<div class="mt-auto">
+<button class="w-full py-4 rounded-md font-bold text-white editorial-gradient transition-transform active:scale-95">Voir le programme</button>
+</div>
+</div>
+</div>
+<!-- Program Card 3 -->
+<div class="group flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
+<div class="relative h-72 overflow-hidden">
+<img alt="Endurance program" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Wide shot of a runner on a mountain trail at dusk, silhouette against a deep purple and orange sunset sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfIsxX3knOHfZ_2L15cFlC9iEMzzjuPKKutAco5Ms_k_ePn0OFDD1Uu_kHkBQL81JWogQbcTUSzmx1hdeaCxnK1lL16hBYVEke-94ONGEOHMF4K_EPWRoaU7JrQlJdB9QP1-3O3O3V1PqTFlOfGx7Otho_oNfJCNsEGlRh-yGp3c7Hb6EEru1BwdpevY3vu3xqsIl9xsdwAX6hwfnVHIoMJ6cwIAnmgNWAaGumIqIKj0KeF7pQSme81eTlfW4gMq2iE035_6xkAH0"/>
+<div class="absolute top-4 left-4 bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-xs font-bold">Expert</div>
+</div>
+<div class="p-8 flex-1 flex flex-col">
+<div class="flex items-center space-x-4 mb-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">schedule</span> 12 Weeks</span>
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">directions_run</span> 6 days/week</span>
+</div>
+<h3 class="text-2xl font-black mb-4">Peak Endurance</h3>
+<p class="text-on-surface-variant text-sm mb-8 line-clamp-2">Transform your aerobic threshold. A rigorous protocol for serious endurance athletes and runners.</p>
+<div class="mt-auto">
+<button class="w-full py-4 rounded-md font-bold text-white editorial-gradient transition-transform active:scale-95">Voir le programme</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Exercises (Bento Grid) -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="text-center mb-16">
+<h2 class="text-5xl font-black tracking-tight mb-4">Featured Exercises</h2>
+<p class="text-on-surface-variant font-medium">Master the movements that define our programs.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-6 h-[700px]">
+<div class="md:col-span-2 md:row-span-2 relative rounded-2xl overflow-hidden group">
+<img alt="Technique" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" data-alt="Close-up focusing on proper form of an athlete performing a barbell deadlift, highlighting muscle tension and high-end equipment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdbpRBc9ugPq4U9hh8pNIQN1rB-HBCJmBlL0FXm2X_xtfQolKB7PoDdw_TMhF6kFZcDjexjsoq2ksVlr6LUjgnoiQhUyW4qtuQnyicldzurM_IqmygOILg3_yN8PcIYhQc1LI2_vw_moQB15JZkZQpeO-KB2Arphqn7IUN-bz21ZDIGsMMGHxYIAnMHbz3T_Wl_QPlpXm5nW0ribnBMXhbXlcEeAdA0a4u_LkL3wTwmNWbAToRMmCOpacemeahodPNjxaSW64z54s"/>
+<div class="absolute inset-0 bg-gradient-to-t from-stone-900/80 to-transparent"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<h4 class="text-3xl font-black mb-2">The Perfect Deadlift</h4>
+<p class="opacity-80 text-sm max-w-sm">Learn the biomechanics of the ultimate posterior chain exercise.</p>
+</div>
+</div>
+<div class="md:col-span-2 relative rounded-2xl overflow-hidden group">
+<img alt="Nutrition" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" data-alt="High-end studio shot of colorful healthy bowls with avocados, seeds, and fresh greens on a stone surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU9P5QHBSbyNZwcnDAWsfJLPRtNNTOaTNXfe_0wfZzNtx4wVrynblE-tKwZUMGgNHlxxQqWk7jaINtxaass8EWjY14MrR8suu70r_TXxejfNTPsJ69dU-yB2I-2YVGVK4KhfVH5D6J05GDjC8xngY2gcHdzd_4vaKHXc6xSrfimsaYEgRLgnALW1QtUlHUDShhG0JNHDSLnyUy-FFDVEijKYnoYNeVNSBlFh5_GiJJzmyalvnhFo87PCkIbTiNhtEU9bEn9PBvP9o"/>
+<div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 to-transparent"></div>
+<div class="absolute bottom-6 left-6 text-white">
+<h4 class="text-2xl font-black mb-1">Fueling Tactics</h4>
+<p class="opacity-80 text-xs">Nutritional strategies for intra-workout performance.</p>
+</div>
+</div>
+<div class="relative rounded-2xl overflow-hidden group vibrant-accent-gradient flex items-center justify-center p-8 text-center">
+<div>
+<span class="material-symbols-outlined text-5xl text-white mb-4">bolt</span>
+<h4 class="text-xl font-black text-white">Explosive Power</h4>
+<p class="text-white/80 text-xs mt-2">Plyometric drills for elite speed.</p>
+</div>
+</div>
+<div class="relative rounded-2xl overflow-hidden group">
+<img alt="Recovery" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" data-alt="Modern high-tech recovery zone with foam rollers and percussion massage tools in a bright, airy wellness center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrFrDIJd0BSLvo3hMJgIR57KoNCtOlhDU-lnwnjy-hA9uFJvfr58TQzbjHRGuG55axmRb3tDCyyL6yyx5sdeFJx2DOSYgYo7l8ftExcKSYdy5qmgm2bQfpoeZ1pHEwz2QBjg95uOHjMeDy9aMxftpn5hQSPJDtTVieOU5CwXZES6cICnSY6qxXEAIwLhLEi14b4NPkDWGstLqq0-WiF79fT5wMQxZJWYKZOa_xfgUL-okm_EArQbgt1yhTjL1h8gaAlWUD5PGYQGY"/>
+<div class="absolute inset-0 bg-black/40"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<h4 class="text-xl font-black text-white border-b-2 border-primary-container pb-1">Recovery Lab</h4>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Community Callout -->
+<section class="py-24 overflow-hidden bg-white">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="bg-stone-900 rounded-[2rem] p-16 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
+<div class="vibrant-accent-gradient w-full h-full blur-[100px] transform translate-x-1/2 -translate-y-1/2"></div>
+</div>
+<div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+<div>
+<h2 class="text-5xl font-black text-white leading-tight mb-8">Join the Atrium <br/>Collective.</h2>
+<p class="text-stone-400 text-lg mb-10">Connect with thousands of dedicated athletes. Share progress, join local meets, and push your limits together.</p>
+<div class="flex space-x-4">
+<button class="bg-primary-container text-on-primary-container px-8 py-4 rounded-md font-bold">Join Community</button>
+<button class="text-white border border-stone-700 px-8 py-4 rounded-md font-bold hover:bg-stone-800 transition-colors">Learn More</button>
+</div>
+</div>
+<div class="hidden md:flex justify-end">
+<div class="flex -space-x-4">
+<img alt="User 1" class="w-20 h-20 rounded-full border-4 border-stone-900 object-cover" data-alt="Portrait of a smiling woman athlete" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmuQrxpArwEAPnZVqfRumVn-3ba1mKxXKxnp6AdnHujBA1YDhwxOKALLW8xR-_4t8vInzWd8rZtqP0bfAFoLtseA1GCct88cTuZTipzPbhX64_hNJbXMI0sybdmns9HCQs-bOxtexTYW3cYUCUjD42EVtq2BJ894mFnKX1Mmu-iagLpGhl5MiAzZtF1ip6bjzk0tWzqDgDNsyE_sA3svlmkR39HN9vSFeP3-oqfTvYxZyO-YUJLFk9mBH2x-7bKMhKcCxknuppsj4"/>
+<img alt="User 2" class="w-20 h-20 rounded-full border-4 border-stone-900 object-cover" data-alt="Portrait of a muscular man athlete" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWV1xCHn9YCzpkBkAjRaqzDfc2XS0-pW_FGIln71yO9oQ39q96K4emYwvhCmKfGj9KK4YQVnx5qP4FIbarfulz21niGSZXsR_3QJsRRU6Zgnzro_BjvpjkT1Ee8MbbHQQYbljx6wCedXeZRHeRayjJnk0xAMncTvehqhI606WI9-9CUi4c-DwpIE0nxcs3TGGiRJ8uV8SwPJvCpmaY_3v7J_rORB99NWL9Zp8nzg5aAW-PTQ8AxeoCcG6gRfibcEhiaA3C5KtsYdQ"/>
+<img alt="User 3" class="w-20 h-20 rounded-full border-4 border-stone-900 object-cover" data-alt="Portrait of a young professional runner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvU8gZ5ODXaTvIhdjloNxGvvVmW5nCKjIKdD1e46rlr5xPHlT1U_ox-RvJxM5mMN2qCAX8cetvZeOtqTktrc1GonoiRJLZIGz9PAEloFMQjcstSvEb8sHySJUUqgLpeFTFearFePxt4z58s0uDIBHY6mRE6-o3MnsJwBOQIaTF3TgmluPEUvC0YaSwRVRJkvH4KMoncWLkapavduldYqd-P1uWKQlzjMKf8HL567Ht5K6AlBxYy6CohKAfpVOSX1zEY1sQ6i82_wQ"/>
+<div class="w-20 h-20 rounded-full border-4 border-stone-900 bg-stone-800 flex items-center justify-center text-white font-bold text-lg">+2k</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-stone-100 py-12 mt-auto font-['Inter'] text-sm">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-12 max-w-7xl mx-auto">
+<div class="flex flex-col space-y-4">
+<div class="font-['Manrope'] font-bold text-stone-900 text-xl">Atrium Digital</div>
+<p class="text-stone-500 max-w-xs">Elevating physical performance through high-end digital experiences and expert-led structural programs.</p>
+<p class="text-stone-500">© 2024 Atrium Digital. All rights reserved.</p>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col space-y-3">
+<span class="font-bold text-stone-900 uppercase text-xs tracking-widest mb-2">Company</span>
+<a class="text-stone-500 hover:text-stone-800 transition-opacity" href="#">Privacy Policy</a>
+<a class="text-stone-500 hover:text-stone-800 transition-opacity" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col space-y-3">
+<span class="font-bold text-stone-900 uppercase text-xs tracking-widest mb-2">Resources</span>
+<a class="text-stone-500 hover:text-stone-800 transition-opacity" href="#">Support</a>
+<a class="text-stone-500 hover:text-stone-800 transition-opacity" href="#">Contact</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>
