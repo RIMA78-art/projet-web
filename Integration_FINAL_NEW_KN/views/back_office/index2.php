@@ -1,0 +1,1170 @@
+<?php
+/**
+ * Admin Back Office Dashboard
+ * Integrates with AdminUserController to display dynamic admin data
+ */
+
+// Load controller and get user data
+require_once __DIR__ . '/../../models/Database.php';
+require_once __DIR__ . '/../../models/AdminUser.php';
+require_once __DIR__ . '/../../models/Post.php';
+
+// Initialize admin model
+$adminUserModel = new AdminUser();
+$postModel = new Post();
+
+// Get pagination parameters
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$limit = 10;
+$offset = ($page - 1) * $limit;
+
+// Get search parameter
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
+// Fetch users
+$users = $adminUserModel->getAllUsers($limit, $offset, $search);
+$totalUsers = $adminUserModel->getUserCount($search);
+$totalPages = ceil($totalUsers / $limit);
+
+// Fetch posts
+$allPosts = $postModel->getAll(1000);
+$totalPosts = count($allPosts);
+
+// Get statistics
+$stats = $adminUserModel->getUserStatistics();
+?>
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>NutriNova Admin - Dashboard</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f7f9fb",
+                        "on-primary-container": "#003c0b",
+                        "secondary-fixed-dim": "#a2c9ff",
+                        "primary-fixed-dim": "#78dc77",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary-container": "#003663",
+                        "surface-variant": "#e0e3e5",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#becab9",
+                        "tertiary-fixed-dim": "#ffb1c7",
+                        "background": "#f7f9fb",
+                        "tertiary-container": "#f26f9d",
+                        "inverse-primary": "#78dc77",
+                        "on-tertiary-fixed-variant": "#861948",
+                        "on-primary-fixed": "#002204",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#006e1c",
+                        "outline": "#6f7a6b",
+                        "on-tertiary-fixed": "#3e001c",
+                        "primary-container": "#4caf50",
+                        "surface-dim": "#d8dadc",
+                        "tertiary": "#a63360",
+                        "surface-container": "#eceef0",
+                        "on-surface-variant": "#3f4a3c",
+                        "on-secondary-fixed": "#001c38",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffd9e2",
+                        "primary-fixed": "#94f990",
+                        "inverse-surface": "#2d3133",
+                        "primary": "#006e1c",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed-variant": "#005313",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#47a1ff",
+                        "on-tertiary-container": "#690034",
+                        "on-secondary-fixed-variant": "#004881",
+                        "surface-bright": "#f7f9fb",
+                        "secondary": "#0060a8",
+                        "secondary-fixed": "#d3e4ff",
+                        "on-background": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, .font-headline { font-family: 'Manrope', sans-serif; }
+        .custom-gradient {
+            background: linear-gradient(135deg, #006e1c 0%, #0060a8 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+        }
+        .section-content {
+            display: none;
+        }
+        .section-content.active {
+            display: block;
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link.active {
+            color: #006e1c;
+            font-weight: bold;
+            border-right: 4px solid #006e1c;
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+
+<!-- SideNavBar -->
+<aside class="h-screen w-72 fixed left-0 top-0 overflow-y-auto bg-slate-50 dark:bg-slate-900 flex flex-col py-8 px-6 z-50">
+    <div class="mb-10 px-2">
+        <span class="text-2xl font-black text-green-700 dark:text-green-500">NutriNova</span>
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">Admin Console</p>
+    </div>
+    
+    <button class="mb-8 w-full py-3 px-4 rounded-xl bg-gradient-to-br from-primary to-secondary text-white font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
+        <span class="material-symbols-outlined">add</span>
+        New Insight
+    </button>
+
+    <nav class="flex-1 space-y-2">
+        <!-- Dashboard -->
+        <a onclick="showSection('dashboard')" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl transition-colors duration-200 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer active">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-sm font-semibold">Dashboard</span>
+        </a>
+        
+        <!-- User Management -->
+        <a onclick="showSection('users')" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl transition-colors duration-200 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer">
+            <span class="material-symbols-outlined">group</span>
+            <span class="text-sm font-semibold">User Management</span>
+        </a>
+        
+        <!-- Nutrition Management -->
+        <a onclick="showSection('nutrition')" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl transition-colors duration-200 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer">
+            <span class="material-symbols-outlined">restaurant</span>
+            <span class="text-sm font-semibold">Nutrition Management</span>
+        </a>
+        
+        <!-- Shop Management -->
+        <a onclick="showSection('shop')" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl transition-colors duration-200 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            <span class="text-sm font-semibold">Shop Management</span>
+        </a>
+        
+        <!-- Community Management -->
+        <a onclick="showSection('community')" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl transition-colors duration-200 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer">
+            <span class="material-symbols-outlined">forum</span>
+            <span class="text-sm font-semibold">Community Management</span>
+        </a>
+        
+        <!-- Sport Coaching -->
+        <a onclick="showSection('sport')" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl transition-colors duration-200 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer">
+            <span class="material-symbols-outlined">fitness_center</span>
+            <span class="text-sm font-semibold">Sport Coaching</span>
+        </a>
+    </nav>
+
+    <div class="mt-auto pt-6 border-t border-slate-200 dark:border-slate-800 space-y-1">
+        <a class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+            <span class="material-symbols-outlined">settings</span>
+            <span class="text-sm font-semibold">Settings</span>
+        </a>
+        <a class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+            <span class="material-symbols-outlined">logout</span>
+            <span class="text-sm font-semibold">Logout</span>
+        </a>
+    </div>
+</aside>
+
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-18rem)] h-20 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl flex justify-between items-center px-12">
+    <div class="flex items-center gap-4 flex-1">
+        <h1 class="text-xl font-bold font-headline text-blue-900 dark:text-blue-300" id="page-title">Admin Dashboard</h1>
+        <div class="relative w-96 ml-8">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+            <input class="w-full pl-10 pr-4 py-2 bg-surface-container-high border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20" placeholder="Search..." type="text"/>
+        </div>
+    </div>
+    <div class="flex items-center gap-6">
+        <button class="relative text-slate-500 hover:text-blue-600 transition-all active:scale-95">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="absolute top-0 right-0 w-2 h-2 bg-tertiary rounded-full"></span>
+        </button>
+        <button class="text-slate-500 hover:text-blue-600 transition-all active:scale-95">
+            <span class="material-symbols-outlined">help_outline</span>
+        </button>
+        <div class="flex items-center gap-3 pl-6 border-l border-slate-200">
+            <div class="text-right">
+                <p class="text-sm font-bold">Admin Alex</p>
+                <p class="text-[10px] uppercase tracking-tighter text-slate-500">Super Admin</p>
+            </div>
+            <img alt="Administrator Profile" class="w-10 h-10 rounded-full border-2 border-primary-container object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKUGrbXbMuZ5nx5tA3_ccBY_aT4ADzFZe6aCepyt_kinQJcpcz8zA16OzaDdJRfr8KmkwoCPKsDMDPIbFMlUXHnLPwrU0klduSUxHcbv8A7Rjkfh9dZA5NRfdU72tW3XYNYWThSc7Uecs2mVCW84LP9gKsIapm06szcXW-8ov4WOaYFRDDFKF8SbFXIy91ebI0bOphUDPO5EzeOfBXTKP2ypWic5jIpuQ9jfALN9qe1ztYt83Gwu_bG2rw_EhPM9smu88qLyZ2dq_T"/>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content Canvas -->
+<main class="ml-72 pt-28 px-12 pb-12">
+
+    <!-- SECTION: DASHBOARD (Default) -->
+    <section id="dashboard" class="section-content active">
+        <div class="mb-10">
+            <span class="text-tertiary font-semibold text-sm tracking-wider uppercase">Welcome</span>
+            <h2 class="text-4xl font-extrabold font-headline text-on-surface mt-2 tracking-tight">NutriNova Admin Console</h2>
+            <p class="text-on-surface-variant mt-2 max-w-2xl text-lg">Select a section from the menu to manage different aspects of your platform.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div onclick="showSection('users')" class="bg-surface-container-lowest p-8 rounded-xl hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-primary">
+                <div class="p-3 bg-secondary/10 rounded-xl mb-4">
+                    <span class="material-symbols-outlined text-secondary text-3xl">group</span>
+                </div>
+                <h3 class="text-xl font-bold text-on-surface">User Management</h3>
+                <p class="text-on-surface-variant text-sm mt-2">Manage system users and roles</p>
+            </div>
+            <div onclick="showSection('nutrition')" class="bg-surface-container-lowest p-8 rounded-xl hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-primary">
+                <div class="p-3 bg-primary/10 rounded-xl mb-4">
+                    <span class="material-symbols-outlined text-primary text-3xl">restaurant_menu</span>
+                </div>
+                <h3 class="text-xl font-bold text-on-surface">Nutrition Management</h3>
+                <p class="text-on-surface-variant text-sm mt-2">Manage recipes and nutrition data</p>
+            </div>
+            <div onclick="showSection('shop')" class="bg-surface-container-lowest p-8 rounded-xl hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-primary">
+                <div class="p-3 bg-tertiary/10 rounded-xl mb-4">
+                    <span class="material-symbols-outlined text-tertiary text-3xl">shopping_bag</span>
+                </div>
+                <h3 class="text-xl font-bold text-on-surface">Shop Management</h3>
+                <p class="text-on-surface-variant text-sm mt-2">Manage products and inventory</p>
+            </div>
+            <div onclick="showSection('community')" class="bg-surface-container-lowest p-8 rounded-xl hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-primary">
+                <div class="p-3 bg-secondary-container/20 rounded-xl mb-4">
+                    <span class="material-symbols-outlined text-secondary text-3xl">forum</span>
+                </div>
+                <h3 class="text-xl font-bold text-on-surface">Community Management</h3>
+                <p class="text-on-surface-variant text-sm mt-2">Moderate community interactions</p>
+            </div>
+            <div onclick="showSection('sport')" class="bg-surface-container-lowest p-8 rounded-xl hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-primary">
+                <div class="p-3 bg-primary-container/20 rounded-xl mb-4">
+                    <span class="material-symbols-outlined text-primary text-3xl">fitness_center</span>
+                </div>
+                <h3 class="text-xl font-bold text-on-surface">Sport Coaching</h3>
+                <p class="text-on-surface-variant text-sm mt-2">Manage workouts and coaching</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: USER MANAGEMENT -->
+    <section id="users" class="section-content">
+        <div class="mb-10">
+            <span class="text-tertiary font-semibold text-sm tracking-wider uppercase">Management</span>
+            <h2 class="text-4xl font-extrabold font-headline text-on-surface mt-2 tracking-tight">User Directory</h2>
+            <p class="text-on-surface-variant mt-2 max-w-2xl text-lg">Manage system users, roles, and permissions.</p>
+        </div>
+        
+        <!-- Stats Grid -->
+        <?php if ($stats): ?>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-surface-container-lowest p-8 rounded-3xl flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <div class="p-3 bg-secondary/10 rounded-2xl">
+                        <span class="material-symbols-outlined text-secondary">groups</span>
+                    </div>
+                    <span class="text-xs font-bold text-tertiary px-3 py-1 bg-tertiary/10 rounded-full">Insight</span>
+                </div>
+                <div>
+                    <p class="text-slate-500 text-sm font-medium">Total Users</p>
+                    <h3 class="text-4xl font-extrabold text-on-surface tracking-tight mt-1"><?php echo htmlspecialchars($stats['total_users']); ?></h3>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-green-600 font-semibold">
+                    <span class="material-symbols-outlined text-sm">trending_up</span>
+                    <span>All registered users</span>
+                </div>
+            </div>
+            
+            <div class="bg-surface-container-lowest p-8 rounded-3xl flex flex-col gap-4 border-b-4 border-primary">
+                <div class="flex items-center justify-between">
+                    <div class="p-3 bg-primary/10 rounded-2xl">
+                        <span class="material-symbols-outlined text-primary">person_check</span>
+                    </div>
+                    <div class="flex gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                        <span class="text-[10px] font-bold text-primary uppercase">Active</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-slate-500 text-sm font-medium">Active Users</p>
+                    <h3 class="text-4xl font-extrabold text-on-surface tracking-tight mt-1"><?php echo htmlspecialchars($stats['active_users']); ?></h3>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-primary font-semibold">
+                    <span class="material-symbols-outlined text-sm">bolt</span>
+                    <span>With sport level set</span>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-primary to-secondary p-8 rounded-3xl flex flex-col gap-4 text-white">
+                <div class="flex items-center justify-between">
+                    <div class="p-3 bg-white/20 rounded-2xl">
+                        <span class="material-symbols-outlined text-white">person_add</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-white/80 text-sm font-medium">New Registrations</p>
+                    <h3 class="text-4xl font-extrabold tracking-tight mt-1"><?php echo htmlspecialchars($stats['new_users_week']); ?></h3>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-semibold">
+                    <span class="material-symbols-outlined text-sm">schedule</span>
+                    <span>In the last 7 days</span>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- User Table -->
+        <div class="bg-surface-container-lowest rounded-3xl overflow-hidden">
+            <div class="px-8 py-6 border-b border-surface-container-high">
+                <h3 class="text-xl font-bold text-on-surface">Registered Users</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-surface-container-low/50 text-slate-500">
+                            <th class="py-5 px-8 text-xs font-bold uppercase tracking-widest">Name</th>
+                            <th class="py-5 px-8 text-xs font-bold uppercase tracking-widest">Email</th>
+                            <th class="py-5 px-8 text-xs font-bold uppercase tracking-widest">Height (cm)</th>
+                            <th class="py-5 px-8 text-xs font-bold uppercase tracking-widest">Weight (kg)</th>
+                            <th class="py-5 px-8 text-xs font-bold uppercase tracking-widest">Level</th>
+                            <th class="py-5 px-8 text-xs font-bold uppercase tracking-widest">Registered</th>
+                            <th class="py-5 px-8 text-xs font-bold uppercase tracking-widest text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-container-high">
+                        <?php if (count($users) > 0): ?>
+                            <?php foreach ($users as $user): ?>
+                            <tr class="hover:bg-surface-container-low/30 transition-colors">
+                                <td class="py-5 px-8">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary">
+                                            <?php echo htmlspecialchars(substr($user['Nom'], 0, 1) . substr($user['Prenom'], 0, 1)); ?>
+                                        </div>
+                                        <span class="font-bold text-on-surface"><?php echo htmlspecialchars($user['Prenom'] . ' ' . $user['Nom']); ?></span>
+                                    </div>
+                                </td>
+                                <td class="py-5 px-8 text-sm text-slate-600"><?php echo htmlspecialchars($user['Email']); ?></td>
+                                <td class="py-5 px-8 text-sm text-slate-600"><?php echo htmlspecialchars($user['Taille_cm'] ?? 'N/A'); ?></td>
+                                <td class="py-5 px-8 text-sm text-slate-600"><?php echo htmlspecialchars($user['Poids_kg'] ?? 'N/A'); ?></td>
+                                <td class="py-5 px-8">
+                                    <span class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-bold">
+                                        <?php echo htmlspecialchars($user['Niveau_sportif'] ?? 'Beginner'); ?>
+                                    </span>
+                                </td>
+                                <td class="py-5 px-8 text-sm text-slate-600"><?php echo date('M d, Y', strtotime($user['created_at'])); ?></td>
+                                <td class="py-5 px-8 text-right">
+                                    <div class="flex justify-end gap-2">
+                                        <button onclick="viewUserDetails(<?php echo $user['id']; ?>)" class="p-2 hover:bg-surface-container-high rounded-lg text-slate-400 hover:text-blue-600 transition-colors" title="View">
+                                            <span class="material-symbols-outlined text-lg">visibility</span>
+                                        </button>
+                                        <button onclick="confirmDeleteUser(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['Prenom'] . ' ' . $user['Nom']); ?>')" class="p-2 hover:bg-surface-container-high rounded-lg text-slate-400 hover:text-red-600 transition-colors" title="Delete">
+                                            <span class="material-symbols-outlined text-lg">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="7" class="py-12 px-8 text-center">
+                                    <p class="text-slate-500 text-lg">No users found</p>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <?php if ($totalPages > 1): ?>
+            <div class="px-8 py-6 border-t border-surface-container-high flex justify-center gap-2">
+                <?php if ($page > 1): ?>
+                    <a href="?action=backoffice&page=<?php echo $page - 1; ?>" class="px-4 py-2 bg-surface-container rounded-lg hover:bg-surface-container-high transition">Previous</a>
+                <?php endif; ?>
+                
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                    <?php if ($i == $page): ?>
+                        <span class="px-4 py-2 bg-primary text-white rounded-lg"><?php echo $i; ?></span>
+                    <?php else: ?>
+                        <a href="?action=backoffice&page=<?php echo $i; ?>" class="px-4 py-2 bg-surface-container rounded-lg hover:bg-surface-container-high transition"><?php echo $i; ?></a>
+                    <?php endif; ?>
+                <?php endfor; ?>
+                
+                <?php if ($page < $totalPages): ?>
+                    <a href="?action=backoffice&page=<?php echo $page + 1; ?>" class="px-4 py-2 bg-surface-container rounded-lg hover:bg-surface-container-high transition">Next</a>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <!-- SECTION: NUTRITION MANAGEMENT -->
+    <section id="nutrition" class="section-content">
+        <div class="mb-10">
+            <span class="text-tertiary font-semibold text-sm tracking-wider uppercase">Health Analytics</span>
+            <h2 class="text-4xl font-extrabold font-headline text-on-surface mt-2 tracking-tight">Nutrition Ecosystem</h2>
+            <p class="text-on-surface-variant mt-2 max-w-2xl text-lg">Manage the global database of recipes and monitor dietary suggestions.</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <div class="col-span-1 bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between transition-transform hover:scale-[1.01]">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-primary-container/20 rounded-xl">
+                        <span class="material-symbols-outlined text-primary text-3xl">restaurant_menu</span>
+                    </div>
+                    <span class="text-primary text-xs font-bold bg-primary-container/10 px-2 py-1 rounded-full">+12% this month</span>
+                </div>
+                <div class="mt-6">
+                    <p class="text-sm font-medium text-on-surface-variant">Total Recipes</p>
+                    <h3 class="text-4xl font-black font-headline text-on-surface mt-1">1,482</h3>
+                </div>
+            </div>
+
+            <div class="col-span-1 bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between transition-transform hover:scale-[1.01]">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-secondary-container/20 rounded-xl">
+                        <span class="material-symbols-outlined text-secondary text-3xl">auto_awesome</span>
+                    </div>
+                    <span class="text-secondary text-xs font-bold bg-secondary-container/10 px-2 py-1 rounded-full">AI Core Active</span>
+                </div>
+                <div class="mt-6">
+                    <p class="text-sm font-medium text-on-surface-variant">AI Suggestions</p>
+                    <h3 class="text-4xl font-black font-headline text-on-surface mt-1">45.2K</h3>
+                </div>
+            </div>
+
+            <div class="col-span-1 lg:col-span-2 bg-gradient-to-br from-primary to-secondary p-8 rounded-xl text-white relative overflow-hidden group">
+                <div class="relative z-10 flex flex-col h-full justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-white/80">calendar_today</span>
+                            <p class="text-sm font-bold text-white/90">Active User Meal Plans</p>
+                        </div>
+                        <h3 class="text-5xl font-black font-headline tracking-tighter">8,921</h3>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-xs font-medium text-white/80">+230 new plans today</p>
+                    </div>
+                </div>
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+            </div>
+        </div>
+
+        <!-- Recipe Table -->
+        <div class="bg-surface-container-low rounded-xl p-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h3 class="text-2xl font-bold font-headline text-on-surface">Recipe Directory</h3>
+                    <p class="text-on-surface-variant text-sm mt-1">Audit and update the nutritional library.</p>
+                </div>
+                <div class="flex gap-4">
+                    <button class="px-6 py-2 bg-surface-container-highest text-on-surface font-semibold rounded-full hover:bg-surface-variant transition-colors flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">filter_list</span>
+                        Filter
+                    </button>
+                    <button class="px-6 py-2 bg-primary text-white font-bold rounded-full hover:scale-105 transition-transform flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">add</span>
+                        New Recipe
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-surface-container-high/50 text-on-surface-variant border-b border-surface-variant/20">
+                            <th class="px-8 py-5 text-xs font-bold uppercase tracking-wider">Title & Category</th>
+                            <th class="px-6 py-5 text-xs font-bold uppercase tracking-wider">Calories</th>
+                            <th class="px-6 py-5 text-xs font-bold uppercase tracking-wider">Eco-Score</th>
+                            <th class="px-6 py-5 text-xs font-bold uppercase tracking-wider">Status</th>
+                            <th class="px-8 py-5 text-xs font-bold uppercase tracking-wider text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-container-low">
+                        <tr class="hover:bg-surface/50 transition-colors group">
+                            <td class="px-8 py-6">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-container">
+                                        <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVAfFEWBqHfJt6Jtku5aZkdiDYJTs2zEGRJUfZium5XVnul6WNzb1m8_BaPxVQKDe4oolUQuqEnKzXDUhjBSTuW4iDwmuy_crP8472R0O-dS_ZaaqSvoCPk6DqBbDVilFXakaoJcyZDaGZ4vsV7HjQwdDvlr_SXrIaQ0aAVhHqPS6xq_nm2Lz_nEhZeErMHWc437MQfhjk90vKDxCWMGk35-lqW-UvKPdxwT6ymB8Qetfr45YryEU20XlFcRj_vDgjLTLd9tahMSJg" alt="Recipe"/>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-on-surface">Mediterranean Power Bowl</p>
+                                        <span class="text-xs text-primary font-medium bg-primary/10 px-2 py-0.5 rounded-full">Plant-Based</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-6">
+                                <p class="text-sm font-semibold text-on-surface">420 kcal</p>
+                                <p class="text-[10px] text-on-surface-variant">Per 300g serving</p>
+                            </td>
+                            <td class="px-6 py-6">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex gap-0.5">
+                                        <div class="w-1.5 h-4 bg-green-500 rounded-full"></div>
+                                        <div class="w-1.5 h-4 bg-green-500 rounded-full"></div>
+                                        <div class="w-1.5 h-4 bg-green-500 rounded-full"></div>
+                                        <div class="w-1.5 h-4 bg-green-500 rounded-full"></div>
+                                        <div class="w-1.5 h-4 bg-slate-200 rounded-full"></div>
+                                    </div>
+                                    <span class="text-xs font-bold text-green-600">A</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-6">
+                                <span class="inline-flex items-center gap-1 bg-green-500/10 text-green-700 text-xs font-bold px-2 py-1 rounded-full">
+                                    <span class="w-1.5 h-1.5 bg-green-600 rounded-full"></span>
+                                    Published
+                                </span>
+                            </td>
+                            <td class="px-8 py-6 text-right">
+                                <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button class="p-2 bg-blue-50 text-blue-600 hover:scale-105 rounded-lg transition-transform">
+                                        <span class="material-symbols-outlined text-sm">edit</span>
+                                    </button>
+                                    <button class="p-2 bg-red-50 text-red-600 hover:scale-105 rounded-lg transition-transform">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: SHOP MANAGEMENT -->
+    <section id="shop" class="section-content">
+        <div class="mb-10 flex justify-between items-end">
+            <div>
+                <span class="text-tertiary font-bold tracking-widest text-[10px] uppercase">E-Commerce Management</span>
+                <h1 class="text-4xl font-black text-on-surface tracking-tight mt-1">Boutique Console</h1>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-12 gap-6 mb-12">
+            <div class="col-span-12 md:col-span-5 bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between min-h-[220px]">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-slate-500 font-medium text-sm">Monthly Revenue</p>
+                        <h2 class="text-4xl font-black mt-2 tracking-tighter text-on-surface">$52,480.00</h2>
+                    </div>
+                    <div class="bg-primary/10 p-3 rounded-xl">
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">payments</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-primary font-bold text-sm">
+                    <span class="material-symbols-outlined">trending_up</span>
+                    <span>+12.5% from last month</span>
+                </div>
+            </div>
+
+            <div class="col-span-12 md:col-span-3 bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-slate-500 font-medium text-sm">Orders Pending</p>
+                        <h2 class="text-4xl font-black mt-2 tracking-tighter text-on-surface">24</h2>
+                    </div>
+                    <div class="bg-secondary-container/20 p-3 rounded-xl text-secondary">
+                        <span class="material-symbols-outlined">pending_actions</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 md:col-span-4 bg-tertiary-container/10 p-8 rounded-xl flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -right-8 -top-8 w-32 h-32 bg-tertiary/5 rounded-full blur-3xl"></div>
+                <div class="flex justify-between items-start relative z-10">
+                    <div>
+                        <p class="text-tertiary font-bold text-sm">Stock Alerts</p>
+                        <h2 class="text-4xl font-black mt-2 tracking-tighter text-on-surface">08</h2>
+                    </div>
+                    <div class="bg-tertiary/10 p-3 rounded-xl">
+                        <span class="material-symbols-outlined text-tertiary">warning</span>
+                    </div>
+                </div>
+                <div class="relative z-10">
+                    <p class="text-xs text-tertiary mt-2 font-bold">Items below 15% threshold</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Inventory Table -->
+        <div class="bg-surface-container-low rounded-xl p-1 overflow-hidden">
+            <div class="bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-2xl font-black tracking-tight">Product Inventory</h3>
+                </div>
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-surface-container-high">
+                                <th class="pb-4 pt-2 px-4 text-[10px] uppercase tracking-widest font-black text-slate-400">Product Detail</th>
+                                <th class="pb-4 pt-2 px-4 text-[10px] uppercase tracking-widest font-black text-slate-400">Category</th>
+                                <th class="pb-4 pt-2 px-4 text-[10px] uppercase tracking-widest font-black text-slate-400 text-right">Price</th>
+                                <th class="pb-4 pt-2 px-4 text-[10px] uppercase tracking-widest font-black text-slate-400">Stock Level</th>
+                                <th class="pb-4 pt-2 px-4 text-[10px] uppercase tracking-widest font-black text-slate-400 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-surface-container-high">
+                            <tr class="hover:bg-surface-container-low transition-colors group">
+                                <td class="py-6 px-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden shrink-0">
+                                            <img alt="Product" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvC7znm3BDu3qwDURw0jy14VLw1bfvLDnD66KbJmxmx78bVBPvta9_vPxvzzbwpcN61RLO8MrRAkg4FvCMJkEl2JDvm7jd_AG3zwCFEjuiQusQENdRSnk8RQEr1S-m_RJ2e5uqFF3bgqDL4lflQLE6KkKEg_MVWVPlNU596r9I1l-vjUrzKzHeLRr2a8GX4nUoa5j8t-5tEL48VraXZ6osxJ5xjJnMSmMAM5KShARcW6LFN-KBQNX12nEs-BwfTM8jV2y6VLnlYmKx"/>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-on-surface leading-tight">Bio-Pure Protein Isolate</p>
+                                            <p class="text-xs text-slate-500">ID: NVA-8821</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-6 px-4">
+                                    <span class="px-3 py-1 bg-surface-container rounded-full text-xs font-bold text-slate-600">Supplements</span>
+                                </td>
+                                <td class="py-6 px-4 text-right font-bold text-on-surface">$34.99</td>
+                                <td class="py-6 px-4">
+                                    <div class="w-full max-w-[120px] bg-slate-100 h-2 rounded-full overflow-hidden">
+                                        <div class="bg-primary h-full w-[85%]"></div>
+                                    </div>
+                                    <p class="text-[10px] font-bold text-slate-500 mt-2">124 in stock</p>
+                                </td>
+                                <td class="py-6 px-4 text-right">
+                                    <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                                            <span class="material-symbols-outlined text-sm">edit</span>
+                                        </button>
+                                        <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                            <span class="material-symbols-outlined text-sm">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: COMMUNITY MANAGEMENT -->
+    <section id="community" class="section-content">
+        <div class="mb-10">
+            <span class="text-tertiary font-semibold text-sm tracking-wider uppercase">Community Hub</span>
+            <h2 class="text-4xl font-extrabold font-headline text-on-surface mt-2 tracking-tight">Community Management</h2>
+            <p class="text-on-surface-variant mt-2 max-w-2xl text-lg">Manage published posts and community discussions.</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-surface-container-lowest p-8 rounded-xl">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-primary/10 rounded-xl">
+                        <span class="material-symbols-outlined text-primary text-3xl">article</span>
+                    </div>
+                    <span class="text-primary text-xs font-bold bg-primary/10 px-2 py-1 rounded-full">Active</span>
+                </div>
+                <div class="mt-6">
+                    <p class="text-sm font-medium text-on-surface-variant">Published Posts</p>
+                    <h3 class="text-4xl font-black text-on-surface mt-1"><?php echo $totalPosts; ?></h3>
+                </div>
+            </div>
+
+            <div class="bg-surface-container-lowest p-8 rounded-xl">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-secondary/10 rounded-xl">
+                        <span class="material-symbols-outlined text-secondary text-3xl">people</span>
+                    </div>
+                    <span class="text-secondary text-xs font-bold bg-secondary/10 px-2 py-1 rounded-full">Community</span>
+                </div>
+                <div class="mt-6">
+                    <p class="text-sm font-medium text-on-surface-variant">Community Members</p>
+                    <h3 class="text-4xl font-black text-on-surface mt-1"><?php echo isset($stats['total_users']) ? $stats['total_users'] : '0'; ?></h3>
+                </div>
+            </div>
+
+            <div class="bg-surface-container-lowest p-8 rounded-xl">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-tertiary/10 rounded-xl">
+                        <span class="material-symbols-outlined text-tertiary text-3xl">calendar_today</span>
+                    </div>
+                    <span class="text-tertiary text-xs font-bold bg-tertiary/10 px-2 py-1 rounded-full">Recent</span>
+                </div>
+                <div class="mt-6">
+                    <p class="text-sm font-medium text-on-surface-variant">Posts This Week</p>
+                    <h3 class="text-4xl font-black text-on-surface mt-1"><?php echo count(array_filter($allPosts, function($p) { return strtotime($p['created_at']) > strtotime('-7 days'); })); ?></h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Published Posts Table -->
+        <div class="bg-surface-container-lowest rounded-xl p-8">
+            <h3 class="text-2xl font-bold mb-6">Published Posts</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-surface-variant">
+                            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Post ID</th>
+                            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Title</th>
+                            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Author</th>
+                            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Content Preview</th>
+                            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Created Date</th>
+                            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (count($allPosts) > 0): ?>
+                            <?php foreach (array_slice($allPosts, 0, 10) as $post): ?>
+                            <tr class="border-b border-surface-variant hover:bg-surface-container transition-colors">
+                                <td class="px-4 py-3">
+                                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-semibold">
+                                        <?php echo htmlspecialchars($post['id']); ?>
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <p class="font-semibold text-on-surface max-w-xs truncate"><?php echo htmlspecialchars($post['titre_post']); ?></p>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <p class="text-on-surface-variant"><?php echo htmlspecialchars($post['nom_auteur']); ?></p>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <p class="text-on-surface-variant text-sm max-w-sm truncate"><?php echo htmlspecialchars(substr($post['contenu_post'], 0, 50) . '...'); ?></p>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <p class="text-on-surface-variant text-sm"><?php echo date('M d, Y H:i', strtotime($post['created_at'])); ?></p>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-2">
+                                        <button onclick="editPost(<?php echo $post['id']; ?>)" class="p-2 hover:bg-blue-100 rounded-lg transition-colors" title="Edit">
+                                            <span class="material-symbols-outlined text-blue-600">edit</span>
+                                        </button>
+                                        <button onclick="deletePost(<?php echo $post['id']; ?>, '<?php echo htmlspecialchars(addslashes($post['titre_post'])); ?>')" class="p-2 hover:bg-red-100 rounded-lg transition-colors" title="Delete">
+                                            <span class="material-symbols-outlined text-red-600">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-on-surface-variant">
+                                    <p>No posts found</p>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: SPORT COACHING -->
+    <section id="sport" class="section-content">
+        <div class="mb-10">
+            <p class="text-tertiary font-bold tracking-widest text-[10px] uppercase mb-2">Performance Analytics</p>
+            <h2 class="text-4xl font-headline font-extrabold text-on-surface tracking-tight">Sport Coaching Management</h2>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
+                <div class="relative z-10">
+                    <span class="material-symbols-outlined text-primary mb-4 block text-3xl">bolt</span>
+                    <p class="text-slate-500 text-sm font-medium mb-1">Active Workouts</p>
+                    <h3 class="text-3xl font-headline font-bold text-on-surface">1,284</h3>
+                    <div class="mt-4 flex items-center gap-2">
+                        <span class="text-green-600 text-xs font-bold bg-green-50 px-2 py-1 rounded-full">+12% this week</span>
+                    </div>
+                </div>
+                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
+                    <span class="material-symbols-outlined text-[120px]">fitness_center</span>
+                </div>
+            </div>
+
+            <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
+                <div class="relative z-10">
+                    <span class="material-symbols-outlined text-secondary mb-4 block text-3xl">sports</span>
+                    <p class="text-slate-500 text-sm font-medium mb-1">Certified Coaches</p>
+                    <h3 class="text-3xl font-headline font-bold text-on-surface">42</h3>
+                    <div class="mt-4 flex items-center gap-2">
+                        <span class="text-blue-600 text-xs font-bold bg-blue-50 px-2 py-1 rounded-full">3 pending verify</span>
+                    </div>
+                </div>
+                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
+                    <span class="material-symbols-outlined text-[120px]">badge</span>
+                </div>
+            </div>
+
+            <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
+                <div class="relative z-10">
+                    <span class="material-symbols-outlined text-tertiary mb-4 block text-3xl">monitoring</span>
+                    <p class="text-slate-500 text-sm font-medium mb-1">User Performance Avg.</p>
+                    <h3 class="text-3xl font-headline font-bold text-on-surface">87.5%</h3>
+                    <div class="mt-4 flex items-center gap-2">
+                        <span class="text-tertiary text-xs font-bold bg-pink-50 px-2 py-1 rounded-full">Optimal Range</span>
+                    </div>
+                </div>
+                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
+                    <span class="material-symbols-outlined text-[120px]">trending_up</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workout Library Table -->
+        <div class="bg-surface-container rounded-xl overflow-hidden">
+            <div class="px-8 py-6 flex justify-between items-center bg-surface-container-high/50">
+                <div>
+                    <h4 class="text-xl font-headline font-bold text-on-surface">Workout Library</h4>
+                    <p class="text-sm text-slate-500">Manage and create training sessions</p>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-slate-500 uppercase text-[10px] tracking-widest border-b border-white/10">
+                            <th class="px-8 py-4 font-bold">Workout Name</th>
+                            <th class="px-8 py-4 font-bold">Intensity</th>
+                            <th class="px-8 py-4 font-bold">Duration</th>
+                            <th class="px-8 py-4 font-bold">Equipment</th>
+                            <th class="px-8 py-4 font-bold text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <tr class="hover:bg-surface-container-low transition-colors group">
+                            <td class="px-8 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0">
+                                        <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkzP-T1USXNAdejNgPG8WOqyifb-50BxEvWURoMUL-u_JG3f1zReorNkD7Y01XoRFHeRPNJiY5Ly803RRctzOf0k8Y2kday545ztw8lqSOyV4c-nmF9vru6VmTyMwn9abBHhAJ9rSFWS6yEP6PuQLuKwT1X1nnp15ZZxlZO6-kgWN8c7igo5eeIeR0bsolNRNYq6SFIy5ANaYP0IsHxieUiqROUsHsQ4Pz2EL-EnXP8JNyTAhWmGPUECNfN2OiD7usn3SnhhLhqaKd" alt="Workout"/>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-on-surface">HIIT Power Blast</p>
+                                        <p class="text-xs text-slate-500">Cardio & Endurance</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold border border-red-100">High</span>
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="flex items-center gap-2 text-slate-700 font-medium">
+                                    <span class="material-symbols-outlined text-sm text-slate-400">timer</span>
+                                    45 min
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="flex gap-2">
+                                    <span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold text-slate-600">Dumbbells</span>
+                                    <span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold text-slate-600">Bench</span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5 text-right">
+                                <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button class="p-2 hover:bg-slate-200 rounded-lg text-slate-400 hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">edit</span>
+                                    </button>
+                                    <button class="p-2 hover:bg-red-50 rounded-lg text-slate-400 hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- Confirmation Modal -->
+<div id="delete-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 max-w-sm mx-auto">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined text-red-600">warning</span>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">Delete User</h3>
+        </div>
+        <p class="text-slate-600 mb-6">Are you sure you want to delete <strong id="delete-user-name"></strong>? This action cannot be undone.</p>
+        <div class="flex gap-3">
+            <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 bg-slate-200 text-slate-900 rounded-lg hover:bg-slate-300 transition font-semibold">Cancel</button>
+            <button onclick="executeDelete()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+<div id="details-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 max-w-lg mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold text-slate-900">User Details</h3>
+            <button onclick="closeDetailsModal()" class="text-slate-500 hover:text-slate-700">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="details-content" class="space-y-4">
+            <p class="text-slate-600">Loading...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="hidden fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50"></div>
+
+<script>
+    let userToDelete = null;
+
+    function confirmDeleteUser(userId, userName) {
+        userToDelete = userId;
+        document.getElementById('delete-user-name').textContent = userName;
+        document.getElementById('delete-modal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('delete-modal').classList.add('hidden');
+        userToDelete = null;
+    }
+
+    function executeDelete() {
+        if (!userToDelete) return;
+
+        const formData = new FormData();
+        formData.append('id', userToDelete);
+
+        fetch('?action=admin_delete_user', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('User deleted successfully');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showToast('Error: ' + data.error, 'error');
+            }
+            closeDeleteModal();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('An error occurred', 'error');
+        });
+    }
+
+    function viewUserDetails(userId) {
+        const detailsContent = document.getElementById('details-content');
+        detailsContent.innerHTML = '<p class="text-slate-600">Loading...</p>';
+        document.getElementById('details-modal').classList.remove('hidden');
+
+        fetch('?action=admin_get_user_details&id=' + userId)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const user = data.user;
+                    detailsContent.innerHTML = `
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-slate-500 uppercase font-semibold">First Name</p>
+                                <p class="text-slate-900 font-semibold">${escapeHtml(user.Prenom)}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500 uppercase font-semibold">Last Name</p>
+                                <p class="text-slate-900 font-semibold">${escapeHtml(user.Nom)}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-sm text-slate-500 uppercase font-semibold">Email</p>
+                                <p class="text-slate-900 font-semibold">${escapeHtml(user.Email)}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500 uppercase font-semibold">Height (cm)</p>
+                                <p class="text-slate-900 font-semibold">${user.Taille_cm || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500 uppercase font-semibold">Weight (kg)</p>
+                                <p class="text-slate-900 font-semibold">${user.Poids_kg || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500 uppercase font-semibold">Level</p>
+                                <p class="text-slate-900 font-semibold">${escapeHtml(user.Niveau_sportif || 'Beginner')}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500 uppercase font-semibold">Objective</p>
+                                <p class="text-slate-900 font-semibold">${escapeHtml(user.Objectif || 'Not specified')}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500 uppercase font-semibold">Registered</p>
+                                <p class="text-slate-900 font-semibold">${new Date(user.created_at).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    detailsContent.innerHTML = '<p class="text-red-600">' + (data.error || 'Error loading user details') + '</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                detailsContent.innerHTML = '<p class="text-red-600">An error occurred</p>';
+            });
+    }
+
+    function closeDetailsModal() {
+        document.getElementById('details-modal').classList.add('hidden');
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ' + 
+                         (type === 'error' ? 'bg-red-600' : 'bg-green-600') + ' text-white';
+        
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 3000);
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    document.getElementById('delete-modal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+
+    document.getElementById('details-modal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDetailsModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeDeleteModal();
+            closeDetailsModal();
+        }
+    });
+
+    function showSection(sectionId) {
+        const sections = document.querySelectorAll('.section-content');
+        sections.forEach(section => section.classList.remove('active'));
+
+        const selectedSection = document.getElementById(sectionId);
+        if (selectedSection) {
+            selectedSection.classList.add('active');
+        }
+
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => link.classList.remove('active'));
+
+        const activeLink = Array.from(navLinks).find(link => {
+            const onclick = link.getAttribute('onclick');
+            return onclick && onclick.includes(`'${sectionId}'`);
+        });
+
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+
+        const titles = {
+            'dashboard': 'Admin Dashboard',
+            'users': 'User Management',
+            'nutrition': 'Nutrition Management',
+            'shop': 'Shop Management',
+            'community': 'Community Management',
+            'sport': 'Sport Coaching'
+        };
+
+        const pageTitle = document.getElementById('page-title');
+        if (pageTitle) {
+            pageTitle.textContent = titles[sectionId] || 'Admin Dashboard';
+        }
+    }
+
+    showSection('dashboard');
+
+    // Community Management Functions
+    let postToDelete = null;
+
+    /**
+     * Edit a post
+     */
+    function editPost(postId) {
+        // Open edit modal or redirect to edit page
+        const editUrl = window.location.origin + '/Integration_FINAL_NEW_KN/index.php?action=admin_edit_post&id=' + postId;
+        window.location.href = editUrl;
+    }
+
+    /**
+     * Delete a post with confirmation
+     */
+    function deletePost(postId, postTitle) {
+        postToDelete = postId;
+        if (confirm('Are you sure you want to delete the post: "' + postTitle + '"?')) {
+            const formData = new FormData();
+            formData.append('id', postId);
+
+            fetch(window.location.origin + '/Integration_FINAL_NEW_KN/index.php?action=admin_delete_post', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Post deleted successfully');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+                postToDelete = null;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the post');
+                postToDelete = null;
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
