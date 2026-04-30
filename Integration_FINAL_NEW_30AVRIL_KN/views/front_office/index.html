@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriNova — Mangez mieux, Performez mieux</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-icon">🌿</div>
+    <span class="nav-logo-text">Nutri<span>Nova</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')">Accueil</a></li>
+    <li><a onclick="showPage('sport')">Programme sportif</a></li>
+    <li><a onclick="showPage('nutrition')">Nutrition IA</a></li>
+    <li><a onclick="showPage('boutique')">Boutique</a></li>
+    <li><a onclick="showPage('community')">Communauté</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-ghost" onclick="showPage('login')">Connexion</button>
+    <button class="btn-primary" onclick="showPage('register')">S'inscrire</button>
+  </div>
+  <div class="hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Action réussie !</div>
+
+<!-- ============================
+     PAGE : ACCUEIL
+     ============================ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        Plateforme #1 de nutrition intelligente
+      </div>
+      <h1>Mangez mieux, <span class="accent">Performez mieux</span>, Protégez la planète</h1>
+      <p>Une plateforme intelligente qui combine nutrition, sport et écologie grâce à l'intelligence artificielle pour transformer votre quotidien.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary btn-lg" onclick="showPage('register')">Commencer maintenant →</button>
+        <button class="btn-outline-white" onclick="showPage('nutrition')">Découvrir l'IA</button>
+        <a class="btn-secondary" href="../back_office/index2.html" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center; padding:12px 24px; border-radius:8px; font-weight:600;">🔐 Backoffice</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <strong>10K+</strong>
+          <span>Utilisateurs actifs</span>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+          <strong>50K+</strong>
+          <span>Plans générés</span>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+          <strong>30%</strong>
+          <span>Impact écologique réduit</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="container">
+      <div class="services-header">
+        <div class="section-label">Nos services</div>
+        <h2 class="section-title">Tout ce dont vous avez besoin,<br>au même endroit</h2>
+        <p class="section-subtitle">NutriNova réunit les meilleurs outils de nutrition, de sport et d'écologie dans une expérience unifiée et personnalisée.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal" onclick="showPage('nutrition')">
+          <div class="service-icon green">🧠</div>
+          <h3>Nutrition IA</h3>
+          <p>Notre IA génère des plans alimentaires 100% personnalisés selon vos objectifs, préférences et contraintes nutritionnelles.</p>
+          <span class="service-link">Essayer maintenant →</span>
+        </div>
+        <div class="service-card reveal" onclick="showPage('sport')" style="transition-delay:0.1s">
+          <div class="service-icon blue">🏃</div>
+          <h3>Programme sportif</h3>
+          <p>Des entraînements adaptés à votre niveau et vos objectifs, avec suivi de progression et ajustements automatiques.</p>
+          <span class="service-link">Voir les programmes →</span>
+        </div>
+        <div class="service-card reveal" onclick="showPage('boutique')" style="transition-delay:0.2s">
+          <div class="service-icon orange">🌍</div>
+          <h3>Éco-score alimentaire</h3>
+          <p>Analysez l'impact écologique de vos aliments et découvrez des alternatives plus durables sans sacrifier le goût.</p>
+          <span class="service-link">Analyser mes repas →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALEURS -->
+  <section>
+    <div class="container">
+      <div class="section-label">Pourquoi NutriNova</div>
+      <h2 class="section-title">Une approche unique,<br>des résultats concrets</h2>
+      <div class="values-grid">
+        <div class="value-card reveal">
+          <div class="value-num">01</div>
+          <h4>Intelligence personnalisée</h4>
+          <p>Des recommandations qui s'adaptent en temps réel à votre profil, vos habitudes et vos progrès.</p>
+        </div>
+        <div class="value-card reveal" style="transition-delay:0.1s">
+          <div class="value-num">02</div>
+          <h4>Plateforme tout-en-un</h4>
+          <p>Nutrition, sport, communauté et boutique réunis dans une seule application intuitive.</p>
+        </div>
+        <div class="value-card reveal" style="transition-delay:0.2s">
+          <div class="value-num">03</div>
+          <h4>Décision basée sur données</h4>
+          <p>Chaque recommandation est fondée sur des données scientifiques validées et votre historique personnel.</p>
+        </div>
+        <div class="value-card reveal" style="transition-delay:0.3s">
+          <div class="value-num">04</div>
+          <h4>Impact santé + environnement</h4>
+          <p>Améliorez votre santé tout en réduisant votre empreinte carbone alimentaire de façon mesurable.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section id="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item reveal">
+          <strong>10 000+</strong>
+          <p>Utilisateurs actifs dans 15 pays</p>
+        </div>
+        <div class="stat-item reveal" style="transition-delay:0.1s">
+          <strong>50 000+</strong>
+          <p>Plans alimentaires générés par l'IA</p>
+        </div>
+        <div class="stat-item reveal" style="transition-delay:0.2s">
+          <strong>30%</strong>
+          <p>Réduction d'impact écologique moyen</p>
+        </div>
+        <div class="stat-item reveal" style="transition-delay:0.3s">
+          <strong>4.9/5</strong>
+          <p>Note de satisfaction utilisateurs</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOUTIQUE PREVIEW -->
+  <section id="boutique-preview">
+    <div class="container">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:48px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <div class="section-label">Boutique</div>
+          <h2 class="section-title">Produits sains &amp; écologiques</h2>
+          <p class="section-subtitle">Sélectionnés pour leur qualité nutritionnelle et leur faible impact environnemental.</p>
+        </div>
+        <button class="btn-primary" onclick="showPage('boutique')">Voir tout →</button>
+      </div>
+      <div class="shop-grid">
+        <div class="product-card reveal">
+          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9)">🥗</div>
+          <div class="product-body">
+            <span class="product-tag">Bio &amp; Local</span>
+            <h3>Kit Salad Detox</h3>
+            <p>Mélange de légumineuses et superfoods certifiés biologiques.</p>
+            <div class="product-footer">
+              <span class="product-price">24,90€</span>
+              <button class="btn-primary" onclick="showToast('Produit ajouté au panier !')">Ajouter</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-card reveal" style="transition-delay:0.1s">
+          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB)">💊</div>
+          <div class="product-body">
+            <span class="product-tag">Complément</span>
+            <h3>Omega-3 Végétal</h3>
+            <p>Acides gras essentiels issus de sources végétales durables.</p>
+            <div class="product-footer">
+              <span class="product-price">32,00€</span>
+              <button class="btn-primary" onclick="showToast('Produit ajouté au panier !')">Ajouter</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-card reveal" style="transition-delay:0.2s">
+          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2)">🥤</div>
+          <div class="product-body">
+            <span class="product-tag">Performance</span>
+            <h3>Protéine de Pois</h3>
+            <p>80% protéines pures, sans lactose ni additifs artificiels.</p>
+            <div class="product-footer">
+              <span class="product-price">28,50€</span>
+              <button class="btn-primary" onclick="showToast('Produit ajouté au panier !')">Ajouter</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-card reveal" style="transition-delay:0.3s">
+          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#F3E5F5,#E1BEE7)">🎽</div>
+          <div class="product-body">
+            <span class="product-tag">Accessoire</span>
+            <h3>Gourde Inox 750ml</h3>
+            <p>Double paroi isotherme, matériaux recyclés certifiés.</p>
+            <div class="product-footer">
+              <span class="product-price">18,00€</span>
+              <button class="btn-primary" onclick="showToast('Produit ajouté au panier !')">Ajouter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMUNAUTÉ PREVIEW -->
+  <section style="background:var(--off-white)">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div class="section-label" style="justify-content:center">Communauté</div>
+        <h2 class="section-title">Rejoignez des milliers de membres</h2>
+        <p class="section-subtitle" style="margin:0 auto">Partagez vos expériences, relevez des défis collectifs et inspirez-vous des autres membres.</p>
+      </div>
+      <div class="community-grid">
+        <div class="community-card reveal">
+          <div class="post-header">
+            <div class="avatar" style="background:linear-gradient(135deg,#4CAF50,#2E7D32)">SA</div>
+            <div class="post-meta">
+              <strong>Sophie Arnaud</strong>
+              <span>Il y a 2 heures</span>
+            </div>
+          </div>
+          <p class="post-content">J'ai suivi le plan Nutrition IA pendant 3 semaines et j'ai perdu 2kg tout en ayant plus d'énergie. Les recommandations sont vraiment personnalisées ! 🌿</p>
+          <div class="post-actions">
+            <span class="post-action" onclick="showToast('❤️ Aimé !')">❤️ 24 j'aime</span>
+            <span class="post-action">💬 8 commentaires</span>
+          </div>
+        </div>
+        <div class="community-card reveal" style="transition-delay:0.1s">
+          <div class="post-header">
+            <div class="avatar" style="background:linear-gradient(135deg,#1E3A8A,#2563EB)">KM</div>
+            <div class="post-meta">
+              <strong>Karim Mensi</strong>
+              <span>Il y a 5 heures</span>
+            </div>
+          </div>
+          <p class="post-content">Défi running de 30 jours terminé ! 🏃 Mon éco-score est passé de D à B grâce aux conseils sur les protéines végétales. Merci NutriNova !</p>
+          <div class="post-actions">
+            <span class="post-action" onclick="showToast('❤️ Aimé !')">❤️ 41 j'aime</span>
+            <span class="post-action">💬 15 commentaires</span>
+          </div>
+        </div>
+        <div class="community-card reveal" style="transition-delay:0.2s">
+          <div class="post-header">
+            <div class="avatar" style="background:linear-gradient(135deg,#F97316,#EA580C)">LB</div>
+            <div class="post-meta">
+              <strong>Léa Bouchard</strong>
+              <span>Hier</span>
+            </div>
+          </div>
+          <p class="post-content">Question pour la communauté : quelqu'un a essayé le programme musculation débutant ? J'hésite entre ça et cardio HIIT pour commencer mon parcours 💪</p>
+          <div class="post-actions">
+            <span class="post-action" onclick="showToast('❤️ Aimé !')">❤️ 12 j'aime</span>
+            <span class="post-action">💬 22 commentaires</span>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:36px;">
+        <button class="btn-primary btn-lg" onclick="showPage('community')">Rejoindre la communauté →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Parlons de votre projet</h2>
+      <div class="contact-wrapper">
+        <div class="contact-info">
+          <h3>Nous sommes là pour vous aider</h3>
+          <p>Une question sur nos programmes, un besoin spécifique ou une idée de collaboration ? Notre équipe répond en moins de 24h.</p>
+          <div class="contact-item">
+            <div class="contact-item-icon">📧</div>
+            <div>
+              <strong>Email</strong>
+              <p>hello@nutrinova.fr</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">📍</div>
+            <div>
+              <strong>Adresse</strong>
+              <p>12 rue de la Santé, Paris 75013</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">📞</div>
+            <div>
+              <strong>Téléphone</strong>
+              <p>+33 1 23 45 67 89</p>
+            </div>
+          </div>
+        </div>
+        <form onsubmit="handleContact(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Prénom</label>
+              <input type="text" class="form-control" placeholder="Marie" required>
+            </div>
+            <div class="form-group">
+              <label>Nom</label>
+              <input type="text" class="form-control" placeholder="Dupont" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="form-control" placeholder="marie@exemple.fr" required>
+          </div>
+          <div class="form-group">
+            <label>Sujet</label>
+            <input type="text" class="form-control" placeholder="Demande d'information">
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea class="form-control" placeholder="Votre message..." required></textarea>
+          </div>
+          <button type="submit" class="btn-primary btn-lg" style="width:100%">Envoyer le message →</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="nav-logo">
+          <div class="nav-logo-icon">🌿</div>
+          <span class="nav-logo-text" style="color:white">Nutri<span>Nova</span></span>
+        </div>
+        <p>La plateforme intelligente qui réunit nutrition personnalisée, programmes sportifs et écologie pour une vie plus saine et durable.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a onclick="showPage('home')">Accueil</a></li>
+          <li><a onclick="showPage('sport')">Programme sportif</a></li>
+          <li><a onclick="showPage('nutrition')">Nutrition IA</a></li>
+          <li><a onclick="showPage('boutique')">Boutique</a></li>
+          <li><a onclick="showPage('community')">Communauté</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Compte</h4>
+        <ul>
+          <li><a onclick="showPage('login')">Connexion</a></li>
+          <li><a onclick="showPage('register')">S'inscrire</a></li>
+          <li><a>Mon profil</a></li>
+          <li><a>Mes plans</a></li>
+          <li><a>Paramètres</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Légal</h4>
+        <ul>
+          <li><a>Mentions légales</a></li>
+          <li><a>Confidentialité</a></li>
+          <li><a>CGU</a></li>
+          <li><a>Cookies</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 NutriNova. Tous droits réservés. Conçu avec 💚 pour la planète.</p>
+      <div class="social-links">
+        <div class="social-link" onclick="showToast('Instagram ouvert !')">📸</div>
+        <div class="social-link" onclick="showToast('Twitter ouvert !')">🐦</div>
+        <div class="social-link" onclick="showToast('LinkedIn ouvert !')">💼</div>
+        <div class="social-link" onclick="showToast('YouTube ouvert !')">▶️</div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ============================
+     PAGE : PROGRAMME SPORTIF
+     ============================ -->
+<div class="page" id="page-sport">
+  <div class="page-hero">
+    <h1>Programmes Sportifs</h1>
+    <p>Des entraînements adaptés à votre niveau, vos objectifs et votre emploi du temps.</p>
+  </div>
+  <section>
+    <div class="container">
+      <div class="programs-grid">
+        <div class="program-card">
+          <div class="program-header" style="background:linear-gradient(135deg,#E8F5E9,#A5D6A7)">🏃</div>
+          <div class="program-body">
+            <h3>Cardio Endurance</h3>
+            <p>Programme progressif pour améliorer votre capacité cardiorespiratoire et brûler des calories durablement.</p>
+            <div class="program-tags">
+              <span class="tag">Débutant → Avancé</span>
+              <span class="tag">3 séances/semaine</span>
+              <span class="tag">8 semaines</span>
+            </div>
+            <button class="btn-primary" style="width:100%" onclick="showToast('Programme démarré ! 🏃')">Commencer ce programme</button>
+          </div>
+        </div>
+        <div class="program-card">
+          <div class="program-header" style="background:linear-gradient(135deg,#E3F2FD,#90CAF9)">🏋️</div>
+          <div class="program-body">
+            <h3>Musculation Full Body</h3>
+            <p>Développez votre masse musculaire avec des exercices complets ciblant l'ensemble du corps.</p>
+            <div class="program-tags">
+              <span class="tag">Intermédiaire</span>
+              <span class="tag">4 séances/semaine</span>
+              <span class="tag">12 semaines</span>
+            </div>
+            <button class="btn-primary" style="width:100%" onclick="showToast('Programme démarré ! 💪')">Commencer ce programme</button>
+          </div>
+        </div>
+        <div class="program-card">
+          <div class="program-header" style="background:linear-gradient(135deg,#FFF3E0,#FFCC80)">⚡</div>
+          <div class="program-body">
+            <h3>HIIT Performance</h3>
+            <p>Intervalles haute intensité pour brûler un maximum de calories en un minimum de temps.</p>
+            <div class="program-tags">
+              <span class="tag">Avancé</span>
+              <span class="tag">5 séances/semaine</span>
+              <span class="tag">6 semaines</span>
+            </div>
+            <button class="btn-primary" style="width:100%" onclick="showToast('Programme démarré ! ⚡')">Commencer ce programme</button>
+          </div>
+        </div>
+        <div class="program-card">
+          <div class="program-header" style="background:linear-gradient(135deg,#F3E5F5,#CE93D8)">🧘</div>
+          <div class="program-body">
+            <h3>Yoga & Mobilité</h3>
+            <p>Améliorez souplesse, posture et bien-être mental avec ce programme de yoga thérapeutique.</p>
+            <div class="program-tags">
+              <span class="tag">Tous niveaux</span>
+              <span class="tag">5 séances/semaine</span>
+              <span class="tag">Continu</span>
+            </div>
+            <button class="btn-primary" style="width:100%" onclick="showToast('Programme démarré ! 🧘')">Commencer ce programme</button>
+          </div>
+        </div>
+        <div class="program-card">
+          <div class="program-header" style="background:linear-gradient(135deg,#FCE4EC,#F48FB1)">🚴</div>
+          <div class="program-body">
+            <h3>Cyclisme & Vélo</h3>
+            <p>De la sortie dominicale à la préparation d'une cyclosportive, adapté à votre ambition.</p>
+            <div class="program-tags">
+              <span class="tag">Débutant → Expert</span>
+              <span class="tag">3-5 séances/semaine</span>
+              <span class="tag">16 semaines</span>
+            </div>
+            <button class="btn-primary" style="width:100%" onclick="showToast('Programme démarré ! 🚴')">Commencer ce programme</button>
+          </div>
+        </div>
+        <div class="program-card">
+          <div class="program-header" style="background:linear-gradient(135deg,#E0F2F1,#80CBC4)">🏊</div>
+          <div class="program-body">
+            <h3>Natation Fitness</h3>
+            <p>Exploitez la résistance de l'eau pour un entraînement complet et sans impact sur les articulations.</p>
+            <div class="program-tags">
+              <span class="tag">Débutant</span>
+              <span class="tag">3 séances/semaine</span>
+              <span class="tag">10 semaines</span>
+            </div>
+            <button class="btn-primary" style="width:100%" onclick="showToast('Programme démarré ! 🏊')">Commencer ce programme</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="nav-logo">
+          <div class="nav-logo-icon">🌿</div>
+          <span class="nav-logo-text" style="color:white">Nutri<span>Nova</span></span>
+        </div>
+        <p>La plateforme intelligente de nutrition, sport et écologie.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a onclick="showPage('home')">Accueil</a></li>
+          <li><a onclick="showPage('nutrition')">Nutrition IA</a></li>
+          <li><a onclick="showPage('boutique')">Boutique</a></li>
+          <li><a onclick="showPage('community')">Communauté</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Compte</h4>
+        <ul>
+          <li><a onclick="showPage('login')">Connexion</a></li>
+          <li><a onclick="showPage('register')">S'inscrire</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a>hello@nutrinova.fr</a></li>
+          <li><a>+33 1 23 45 67 89</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 NutriNova. Tous droits réservés.</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ============================
+     PAGE : NUTRITION IA
+     ============================ -->
+<div class="page" id="page-nutrition">
+  <div class="page-hero">
+    <h1>Nutrition IA</h1>
+    <p>Génération de menus personnalisés et analyse nutritionnelle grâce à l'intelligence artificielle.</p>
+  </div>
+  <section>
+    <div class="container">
+      <div style="text-align:center; margin-bottom:32px;">
+        <div class="section-label" style="justify-content:center">Générateur de menus</div>
+        <h2 class="section-title">Votre plan alimentaire<br>personnalisé en 1 clic</h2>
+      </div>
+      <div class="ai-interface">
+        <h3>🧠 Générateur de menu IA</h3>
+        <p>Renseignez vos préférences pour obtenir un plan adapté à vos besoins.</p>
+        <div class="ai-form-grid">
+          <div class="form-group">
+            <label>Objectif</label>
+            <select class="select-control" id="objectif">
+              <option>Perte de poids</option>
+              <option>Prise de masse</option>
+              <option>Maintien</option>
+              <option>Performance sportive</option>
+              <option>Santé générale</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Régime alimentaire</label>
+            <select class="select-control" id="regime">
+              <option>Omnivore</option>
+              <option>Végétarien</option>
+              <option>Vegan</option>
+              <option>Sans gluten</option>
+              <option>Méditerranéen</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Niveau d'activité</label>
+            <select class="select-control" id="activite">
+              <option>Sédentaire</option>
+              <option>Légèrement actif</option>
+              <option>Modérément actif</option>
+              <option>Très actif</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Calories cibles / jour</label>
+            <input type="number" class="form-control" placeholder="ex: 1800" id="calories" value="1800">
+          </div>
+        </div>
+        <button class="btn-primary btn-lg" style="width:100%" onclick="generateMenu()">
+          🧠 Générer mon menu personnalisé
+        </button>
+        <div id="menu-result" style="display:none">
+          <div class="menu-result">
+            <h4>📋 Menu du jour — <span id="menu-label">Perte de poids</span></h4>
+            <div class="meal-item">
+              <span class="meal-emoji">🌅</span>
+              <div class="meal-info">
+                <strong>Petit-déjeuner</strong>
+                <span id="breakfast">Porridge avoine + fruits rouges + graines de chia</span>
+              </div>
+              <span class="meal-kcal" id="breakfast-kcal">380 kcal</span>
+            </div>
+            <div class="meal-item">
+              <span class="meal-emoji">🌞</span>
+              <div class="meal-info">
+                <strong>Déjeuner</strong>
+                <span id="lunch">Salade quinoa, avocat, tomates cerises, poulet grillé</span>
+              </div>
+              <span class="meal-kcal" id="lunch-kcal">520 kcal</span>
+            </div>
+            <div class="meal-item">
+              <span class="meal-emoji">🍎</span>
+              <div class="meal-info">
+                <strong>Collation</strong>
+                <span id="snack">Pomme + 10 amandes + yaourt grec nature</span>
+              </div>
+              <span class="meal-kcal" id="snack-kcal">210 kcal</span>
+            </div>
+            <div class="meal-item">
+              <span class="meal-emoji">🌙</span>
+              <div class="meal-info">
+                <strong>Dîner</strong>
+                <span id="dinner">Saumon vapeur, brocoli, patate douce, herbes fraîches</span>
+              </div>
+              <span class="meal-kcal" id="dinner-kcal">490 kcal</span>
+            </div>
+            <div class="nutrient-bars" style="margin-top:24px">
+              <h4 style="font-size:0.95rem; margin-bottom:12px;">📊 Analyse nutritionnelle</h4>
+              <div class="nutrient-bar">
+                <label><span>Protéines</span><span style="color:var(--green)" id="prot-label">28%</span></label>
+                <div class="bar-track"><div class="bar-fill" id="prot-bar" style="width:28%;background:var(--green)"></div></div>
+              </div>
+              <div class="nutrient-bar">
+                <label><span>Glucides</span><span style="color:var(--blue-mid)" id="carb-label">45%</span></label>
+                <div class="bar-track"><div class="bar-fill" id="carb-bar" style="width:45%;background:var(--blue-mid)"></div></div>
+              </div>
+              <div class="nutrient-bar">
+                <label><span>Lipides</span><span style="color:#F97316" id="fat-label">27%</span></label>
+                <div class="bar-track"><div class="bar-fill" id="fat-bar" style="width:27%;background:#F97316"></div></div>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; margin-top:20px;">
+              <button class="btn-primary" onclick="showToast('Plan téléchargé en PDF ! 📄')">Télécharger le plan PDF</button>
+              <button class="btn-ghost" onclick="generateMenu()">🔄 Régénérer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="nav-logo">
+          <div class="nav-logo-icon">🌿</div>
+          <span class="nav-logo-text" style="color:white">Nutri<span>Nova</span></span>
+        </div>
+        <p>La plateforme intelligente de nutrition, sport et écologie.</p>
+      </div>
+      <div class="footer-col"><h4>Navigation</h4><ul>
+        <li><a onclick="showPage('home')">Accueil</a></li>
+        <li><a onclick="showPage('sport')">Programme sportif</a></li>
+        <li><a onclick="showPage('boutique')">Boutique</a></li>
+        <li><a onclick="showPage('community')">Communauté</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Compte</h4><ul>
+        <li><a onclick="showPage('login')">Connexion</a></li>
+        <li><a onclick="showPage('register')">S'inscrire</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul>
+        <li><a>hello@nutrinova.fr</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 NutriNova. Tous droits réservés.</p></div>
+  </footer>
+</div>
+
+<!-- ============================
+     PAGE : BOUTIQUE
+     ============================ -->
+<div class="page" id="page-boutique">
+  <div class="page-hero">
+    <h1>Boutique NutriNova</h1>
+    <p>Produits biologiques, compléments nutritionnels et accessoires de sport sélectionnés avec soin.</p>
+  </div>
+  <section style="background:var(--off-white)">
+    <div class="container">
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:36px;">
+        <button class="btn-primary" onclick="filterCategory(this,'all')">Tous</button>
+        <button class="btn-ghost" onclick="filterCategory(this,'bio')">🌿 Bio & Local</button>
+        <button class="btn-ghost" onclick="filterCategory(this,'complement')">💊 Compléments</button>
+        <button class="btn-ghost" onclick="filterCategory(this,'sport')">🏋️ Sport</button>
+        <button class="btn-ghost" onclick="filterCategory(this,'accessoire')">🎽 Accessoires</button>
+        <button class="btn-primary" onclick="showPage('panier')" style="margin-left:auto;">🛒 Panier</button>
+      </div>
+      <div class="shop-grid">
+        <p id="boutique-empty-message" style="grid-column:1 / -1; color:var(--gray-500);">Chargement des produits...</p>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="nav-logo">
+          <div class="nav-logo-icon">🌿</div>
+          <span class="nav-logo-text" style="color:white">Nutri<span>Nova</span></span>
+        </div>
+        <p>La plateforme intelligente de nutrition, sport et écologie.</p>
+      </div>
+      <div class="footer-col"><h4>Navigation</h4><ul>
+        <li><a onclick="showPage('home')">Accueil</a></li>
+        <li><a onclick="showPage('sport')">Programme sportif</a></li>
+        <li><a onclick="showPage('nutrition')">Nutrition IA</a></li>
+        <li><a onclick="showPage('community')">Communauté</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Compte</h4><ul>
+        <li><a onclick="showPage('login')">Connexion</a></li>
+        <li><a onclick="showPage('register')">S'inscrire</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul>
+        <li><a>hello@nutrinova.fr</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 NutriNova. Tous droits réservés.</p></div>
+  </footer>
+</div>
+
+<!-- ============================
+     PAGE : PANIER
+     ============================ -->
+<div class="page" id="page-panier">
+  <div class="page-hero">
+    <h1>Votre Panier</h1>
+    <p>Produits ajoutés à votre panier.</p>
+  </div>
+  <section>
+    <div class="container">
+      <div id="cart-items">
+        <p>Chargement du panier...</p>
+      </div>
+      <div id="cart-summary" style="margin-top:20px; padding:16px; background:var(--off-white); border-radius:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <strong>Total</strong>
+          <strong id="cart-total-value">0.00€</strong>
+        </div>
+        <button id="confirm-order-btn" class="btn-primary" style="width:100%" onclick="goToOrderForm()" disabled>Confirmer Ordre</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============================
+     PAGE : CONFIRMATION COMMANDE
+     ============================ -->
+<div class="page" id="page-order">
+  <div class="page-hero">
+    <h1>Confirmer Ordre</h1>
+    <p>Veuillez renseigner vos informations avant confirmation.</p>
+  </div>
+  <section>
+    <div class="container">
+      <form id="order-form" onsubmit="submitOrder(event)" style="max-width:700px; margin:0 auto;">
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" id="order-name" class="form-control" required placeholder="Votre nom complet">
+        </div>
+        <div class="form-group">
+          <label>Adresse</label>
+          <textarea id="order-address" class="form-control" required placeholder="Votre adresse complète"></textarea>
+        </div>
+        <div class="form-group">
+          <label>No Téléphone (8 chiffres)</label>
+          <input type="text" id="order-phone" class="form-control" required maxlength="8" pattern="\d{8}" inputmode="numeric" placeholder="12345678">
+        </div>
+        <div class="form-group">
+          <label>Total panier</label>
+          <input type="text" id="order-total" class="form-control" readonly>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button type="submit" class="btn-primary btn-lg">Confirm</button>
+          <button type="button" class="btn-ghost btn-lg" onclick="showPage('panier')">Retour au panier</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<!-- ============================
+     PAGE : COMMUNAUTÉ
+     ============================ -->
+<div class="page" id="page-community">
+  <div class="page-hero">
+    <h1>Communauté NutriNova</h1>
+    <p>Échangez, partagez et progressez ensemble avec des milliers de membres passionnés.</p>
+  </div>
+  <section>
+    <div class="container">
+      <div class="forum-layout">
+        <div>
+          <h3 style="font-size:1.4rem; font-weight:700; margin-bottom:24px;">💬 Dernières discussions</h3>
+          <div id="forum-posts-container">
+          <div class="forum-post">
+            <div class="post-header">
+              <div class="avatar" style="background:linear-gradient(135deg,#4CAF50,#2E7D32)">SA</div>
+              <div class="post-meta">
+                <strong>Sophie Arnaud</strong>
+                <span>Nutrition • Il y a 2 heures</span>
+              </div>
+            </div>
+            <p class="post-content">J'ai suivi le plan Nutrition IA pendant 3 semaines et les résultats sont bluffants ! -2kg et beaucoup plus d'énergie le matin. Les repas sont vraiment équilibrés et savoureux. Je recommande vraiment l'objectif "Perte de poids progressive".</p>
+            <div class="post-actions">
+              <span class="post-action" onclick="showToast('❤️ Aimé !')">❤️ 24</span>
+              <span class="post-action">💬 8 réponses</span>
+              <span class="post-action">🔁 Partager</span>
+            </div>
+          </div>
+          <div class="forum-post">
+            <div class="post-header">
+              <div class="avatar" style="background:linear-gradient(135deg,#1E3A8A,#2563EB)">KM</div>
+              <div class="post-meta">
+                <strong>Karim Mensi</strong>
+                <span>Sport • Il y a 5 heures</span>
+              </div>
+            </div>
+            <p class="post-content">Défi running de 30 jours terminé ! 🏃 220km au total, une progression de 18% sur le 5km. Mon éco-score alimentaire est passé de D à B grâce aux conseils sur les protéines végétales. La combinaison sport + nutrition IA c'est vraiment puissant.</p>
+            <div class="post-actions">
+              <span class="post-action" onclick="showToast('❤️ Aimé !')">❤️ 41</span>
+              <span class="post-action">💬 15 réponses</span>
+              <span class="post-action">🔁 Partager</span>
+            </div>
+          </div>
+          <div class="forum-post">
+            <div class="post-header">
+              <div class="avatar" style="background:linear-gradient(135deg,#F97316,#EA580C)">LB</div>
+              <div class="post-meta">
+                <strong>Léa Bouchard</strong>
+                <span>Débutants • Hier</span>
+              </div>
+            </div>
+            <p class="post-content">Question pour la communauté : quelqu'un a essayé le programme musculation débutant ? J'hésite entre ça et cardio HIIT pour commencer mon parcours. Je suis sédentaire depuis 2 ans et je veux reprendre doucement mais sûrement 💪</p>
+            <div class="post-actions">
+              <span class="post-action" onclick="showToast('❤️ Aimé !')">❤️ 12</span>
+              <span class="post-action">💬 22 réponses</span>
+              <span class="post-action">🔁 Partager</span>
+            </div>
+          </div>
+          <div class="forum-post">
+            <div class="post-header">
+              <div class="avatar" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED)">MT</div>
+              <div class="post-meta">
+                <strong>Marc Thibault</strong>
+                <span>Recettes • Il y a 2 jours</span>
+              </div>
+            </div>
+            <p class="post-content">Partage de ma recette bowl IA-optimisée : riz brun + pois chiches rôtis + légumes grillés + tahini maison + grenade. Éco-score A+, 580kcal et 28g de protéines végétales. La recette complète est dans mes favoris.</p>
+            <div class="post-actions">
+              <span class="post-action" onclick="showToast('❤️ Aimé !')">❤️ 67</span>
+              <span class="post-action">💬 31 réponses</span>
+              <span class="post-action">🔁 Partager</span>
+            </div>
+          </div>
+          </div> <!-- Fin de forum-posts-container -->
+          <button class="btn-primary" onclick="showPostModal()">✏️ Créer une nouvelle discussion</button>
+        </div>
+        <div>
+          <div class="forum-sidebar-card"
+            <h4>🔥 Défis actifs</h4>
+            <div class="challenge-grid" style="grid-template-columns:1fr">
+              <div class="challenge-card">
+                <span class="challenge-icon">🏃</span>
+                <div class="challenge-info">
+                  <h4>30 jours de running</h4>
+                  <p>1 247 participants</p>
+                </div>
+                <span class="challenge-badge">J14/30</span>
+              </div>
+              <div class="challenge-card">
+                <span class="challenge-icon">🥗</span>
+                <div class="challenge-info">
+                  <h4>Mois sans viande</h4>
+                  <p>892 participants</p>
+                </div>
+                <span class="challenge-badge">Actif</span>
+              </div>
+              <div class="challenge-card">
+                <span class="challenge-icon">💧</span>
+                <div class="challenge-info">
+                  <h4>Hydratation +2L/jour</h4>
+                  <p>654 participants</p>
+                </div>
+                <span class="challenge-badge">J7/21</span>
+              </div>
+            </div>
+            <button style="width:100%; margin-top:16px;" class="btn-primary" onclick="showToast('Vous rejoignez le défi ! 🏆')">Rejoindre un défi</button>
+          </div>
+          <div class="forum-sidebar-card">
+            <h4>🏆 Top contributeurs</h4>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="avatar" style="width:36px;height:36px;font-size:12px;background:linear-gradient(135deg,#F59E0B,#D97706)">MT</div>
+                <div style="flex:1"><strong style="font-size:14px">Marc Thibault</strong><br><span style="font-size:12px;color:var(--gray-400)">347 posts</span></div>
+                <span style="font-size:18px">🥇</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="avatar" style="width:36px;height:36px;font-size:12px;background:linear-gradient(135deg,#4CAF50,#2E7D32)">SA</div>
+                <div style="flex:1"><strong style="font-size:14px">Sophie Arnaud</strong><br><span style="font-size:12px;color:var(--gray-400)">289 posts</span></div>
+                <span style="font-size:18px">🥈</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="avatar" style="width:36px;height:36px;font-size:12px;background:linear-gradient(135deg,#1E3A8A,#2563EB)">KM</div>
+                <div style="flex:1"><strong style="font-size:14px">Karim Mensi</strong><br><span style="font-size:12px;color:var(--gray-400)">214 posts</span></div>
+                <span style="font-size:18px">🥉</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="nav-logo">
+          <div class="nav-logo-icon">🌿</div>
+          <span class="nav-logo-text" style="color:white">Nutri<span>Nova</span></span>
+        </div>
+        <p>La plateforme intelligente de nutrition, sport et écologie.</p>
+      </div>
+      <div class="footer-col"><h4>Navigation</h4><ul>
+        <li><a onclick="showPage('home')">Accueil</a></li>
+        <li><a onclick="showPage('sport')">Programme sportif</a></li>
+        <li><a onclick="showPage('nutrition')">Nutrition IA</a></li>
+        <li><a onclick="showPage('boutique')">Boutique</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Compte</h4><ul>
+        <li><a onclick="showPage('login')">Connexion</a></li>
+        <li><a onclick="showPage('register')">S'inscrire</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul>
+        <li><a>hello@nutrinova.fr</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 NutriNova. Tous droits réservés.</p></div>
+  </footer>
+</div>
+
+<!-- ============================
+     PAGE : LOGIN
+     ============================ -->
+<div class="page" id="page-login">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div style="text-align:center; margin-bottom:28px;">
+        <div onclick="showPage('home')" style="cursor:pointer; display:inline-flex; align-items:center; gap:8px; margin-bottom:20px;">
+          <div class="nav-logo-icon">🌿</div>
+          <span class="nav-logo-text">Nutri<span>Nova</span></span>
+        </div>
+        <h2>Bon retour !</h2>
+        <p>Connectez-vous à votre compte</p>
+      </div>
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Adresse email</label>
+          <input id="login-email" type="email" class="form-control" placeholder="vous@exemple.fr" required>
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input id="login-password" type="password" class="form-control" placeholder="••••••••" required>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+            <input type="checkbox"> Se souvenir de moi
+          </label>
+          <a style="font-size:14px; color:var(--green); cursor:pointer;">Mot de passe oublié ?</a>
+        </div>
+        <button type="submit" class="btn-primary btn-lg" style="width:100%">Se connecter →</button>
+      </form>
+      <div class="divider">ou</div>
+      <button class="btn-ghost btn-lg" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px;" onclick="showToast('Connexion Google en cours...')">
+        🌐 Continuer avec Google
+      </button>
+      <div class="auth-switch">
+        Pas encore de compte ? <a onclick="showPage('register')">Créer un compte</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================
+     PAGE : REGISTER
+     ============================ -->
+<div class="page" id="page-register">
+  <div class="auth-page register-bg">
+    <div class="auth-card register-card">
+      <div class="register-head">
+        <div onclick="showPage('home')" class="register-brand">
+          <div class="nav-logo-icon">🌿</div>
+          <span class="nav-logo-text">Nutri<span>Nova</span></span>
+        </div>
+        <h2>Inscription</h2>
+        <p>Rejoignez-nous pour une vie plus saine !</p>
+      </div>
+      <form id="register-form" action="register_user.php" method="POST" onsubmit="handleRegister(event)">
+        <div class="section-title-small">Informations personnelles</div>
+        <div class="form-row">
+          <div class="form-group input-icon-group">
+            <label>Nom</label>
+            <span class="input-icon">👤</span>
+            <input id="register-lastname" name="nom" type="text" class="form-control" placeholder="Nom" required>
+          </div>
+          <div class="form-group input-icon-group">
+            <label>Prénom</label>
+            <span class="input-icon">👤</span>
+            <input id="register-firstname" name="prenom" type="text" class="form-control" placeholder="Prénom" required>
+          </div>
+        </div>
+        <div class="form-group input-icon-group">
+          <label>Email</label>
+          <span class="input-icon">📧</span>
+          <input id="register-email" name="email" type="email" class="form-control" placeholder="vous@exemple.fr" required>
+        </div>
+        <div class="form-group input-icon-group">
+          <label>Mot de passe</label>
+          <span class="input-icon">🔒</span>
+          <input id="register-password" name="mot_de_passe" type="password" class="form-control" placeholder="Min. 6 caractères" required>
+        </div>
+        <div class="form-note">6 caractères minimum</div>
+        <div class="section-title-small">Objectif &amp; santé</div>
+        <div class="form-row">
+          <div class="form-group input-icon-group">
+            <label>Taille (cm)</label>
+            <span class="input-icon">📏</span>
+            <input id="taille" name="taille" type="number" min="100" max="250" class="form-control" placeholder="180">
+          </div>
+          <div class="form-group input-icon-group">
+            <label>Poids (kg)</label>
+            <span class="input-icon">⚖️</span>
+            <input id="poids" name="poids" type="number" min="30" max="200" class="form-control" placeholder="75">
+          </div>
+        </div>
+        <div class="bmi-panel">
+          <span class="bmi-tag">IMC</span>
+          <span id="bmi-value">Entrez votre taille et poids</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group input-icon-group">
+            <label>Objectif</label>
+            <span class="input-icon">🎯</span>
+            <select id="register-objective" name="objectif" class="select-control">
+              <option>Perte de poids</option>
+              <option>Prise de masse</option>
+              <option>Maintien</option>
+              <option>Performance sportive</option>
+              <option>Santé générale</option>
+            </select>
+          </div>
+          <div class="form-group input-icon-group">
+            <label>Niveau sportif</label>
+            <span class="input-icon">🏃</span>
+            <select id="register-level" name="niveau_sportif" class="select-control">
+              <option>Débutant</option>
+              <option>Intermédiaire</option>
+              <option>Avancé</option>
+              <option>Expert</option>
+            </select>
+          </div>
+        </div>
+        <label class="checkbox-row">
+          <input id="register-terms" name="terms" type="checkbox" required>
+          En vous inscrivant, vous acceptez les <a>Conditions d'utilisation</a>.
+        </label>
+        <button type="submit" class="btn-primary btn-lg" style="width:100%">S'inscrire</button>
+      </form>
+      <div class="auth-switch" style="margin-top:18px;">
+        Déjà un compte ? <a onclick="showPage('login')">Se connecter</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="post-modal-overlay" id="post-modal-overlay">
+  <div class="post-modal">
+    <div class="post-modal-header">
+      <h3>Créer une nouvelle discussion</h3>
+      <button class="btn-ghost" onclick="closePostModal()">✕</button>
+    </div>
+    <div style="padding: 20px;">
+      <div class="form-group">
+        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Titre de la discussion</label>
+        <input id="post-title-input" type="text" placeholder="Titre (max 50 caractères)" maxlength="50" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 14px; box-sizing: border-box;">
+        <small style="display: block; margin-top: 4px; color: #999;" id="title-counter">0/50</small>
+      </div>
+      <div class="form-group">
+        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Contenu</label>
+        <textarea id="post-content-input" placeholder="Écris ton message ici... (max 500 caractères)" maxlength="500" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 14px; min-height: 150px; box-sizing: border-box; resize: vertical;"></textarea>
+        <small style="display: block; margin-top: 4px; color: #999;" id="content-counter">0/500</small>
+      </div>
+    </div>
+    <div class="post-modal-actions">
+      <button class="btn-ghost" onclick="closePostModal()">Annuler</button>
+      <button class="btn-primary" onclick="submitPost()">Poster</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE MODIFICATION DE POST -->
+<div class="post-modal-overlay" id="edit-post-modal-overlay">
+  <div class="post-modal">
+    <div class="post-modal-header">
+      <h3>Modifier le post</h3>
+      <button class="btn-ghost" onclick="closeEditPostModal()">✕</button>
+    </div>
+    <div style="padding: 20px;">
+      <div class="form-group">
+        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Titre de la discussion</label>
+        <input id="edit-post-title-input" type="text" placeholder="Titre (max 50 caractères)" maxlength="50" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 14px; box-sizing: border-box;">
+        <small style="display: block; margin-top: 4px; color: #999;" id="edit-title-counter">0/50</small>
+      </div>
+      <div class="form-group">
+        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Contenu</label>
+        <textarea id="edit-post-content-input" placeholder="Écris ton message ici... (max 500 caractères)" maxlength="500" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 14px; min-height: 150px; box-sizing: border-box; resize: vertical;"></textarea>
+        <small style="display: block; margin-top: 4px; color: #999;" id="edit-content-counter">0/500</small>
+      </div>
+    </div>
+    <div class="post-modal-actions">
+      <button class="btn-ghost" onclick="closeEditPostModal()">Annuler</button>
+      <button class="btn-primary" onclick="submitEditPost()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/script.js?v=4"></script>
+</body>
+</html>
