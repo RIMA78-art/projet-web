@@ -1,0 +1,37 @@
+# ============================================================
+# NutriNova - Configuration du Serveur Apache
+# ============================================================
+
+# Activer le mod_rewrite pour des URLs propres
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Rediriger vers index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php?/$1 [L]
+</IfModule>
+
+# Compresser les réponses
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript
+</IfModule>
+
+# Mettre en cache les images
+<FilesMatch "\\.(jpg|jpeg|png|gif|ico|css|js)$">
+    Header set Cache-Control "max-age=31536000"
+</FilesMatch>
+
+# Interdire l'accès aux fichiers sensibles
+<Files "config/Database.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "*.sql">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# UTF-8 par défaut
+AddDefaultCharset utf-8
