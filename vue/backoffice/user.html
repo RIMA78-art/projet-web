@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<script>
+// Protection backoffice — vérifie session avant tout
+(function() {
+  document.documentElement.style.visibility = 'hidden';
+  fetch('../../controleur/frontoffice/UserControleur.php?action=check-session', {
+    credentials: 'same-origin'
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('Réponse invalide');
+    return r.json();
+  })
+  .then(function(res) {
+    if (!res.success || res.user.role !== 'admin') {
+      sessionStorage.setItem('adminRedirectMessage', 'Veuillez vous connecter.');
+      window.location.replace('login.php');
+      return;
+    }
+    document.documentElement.style.visibility = '';
+  })
+  .catch(function() {
+    sessionStorage.setItem('adminRedirectMessage', 'Veuillez vous connecter.');
+    window.location.replace('login.php');
+  });
+})();
+
+function adminLogout() {
+  if (!confirm('Voulez-vous vous déconnecter ?')) return;
+
+  fetch('../../controleur/frontoffice/UserControleur.php?action=logout', {
+    method: 'POST', credentials: 'same-origin'
+  }).finally(function() {
+    window.location.href = 'login.php';
+  });
+}
+</script>
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NutriNova Admin - User Management</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f7f9fb",
+                        "on-primary-container": "#003c0b",
+                        "secondary-fixed-dim": "#a2c9ff",
+                        "primary-fixed-dim": "#78dc77",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary-container": "#003663",
+                        "surface-variant": "#e0e3e5",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#becab9",
+                        "tertiary-fixed-dim": "#ffb1c7",
+                        "background": "#f7f9fb",
+                        "tertiary-container": "#f26f9d",
+                        "inverse-primary": "#78dc77",
+                        "on-tertiary-fixed-variant": "#861948",
+                        "on-primary-fixed": "#002204",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#006e1c",
+                        "outline": "#6f7a6b",
+                        "on-tertiary-fixed": "#3e001c",
+                        "primary-container": "#4caf50",
+                        "surface-dim": "#d8dadc",
+                        "tertiary": "#a63360",
+                        "surface-container": "#eceef0",
+                        "on-surface-variant": "#3f4a3c",
+                        "on-secondary-fixed": "#001c38",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffd9e2",
+                        "primary-fixed": "#94f990",
+                        "inverse-surface": "#2d3133",
+                        "primary": "#006e1c",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed-variant": "#005313",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#47a1ff",
+                        "on-tertiary-container": "#690034",
+                        "on-secondary-fixed-variant": "#004881",
+                        "surface-bright": "#f7f9fb",
+                        "secondary": "#0060a8",
+                        "secondary-fixed": "#d3e4ff",
+                        "on-background": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Manrope', sans-serif; }
+        
+        /* Styles pour affichage des erreurs de validation */
+        .error-message {
+            display: block !important;
+            visibility: visible !important;
+            color: #DC2626 !important;
+            font-size: 12px !important;
+            margin-top: 4px !important;
+            font-weight: bold !important;
+            position: static !important;
+        }
+        
+        input.error, select.error {
+            border-color: #DC2626 !important;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+        }
+    </style>
+
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="h-screen w-72 fixed left-0 top-0 overflow-y-auto bg-slate-50 dark:bg-slate-900 flex flex-col py-8 px-6 z-50">
+<div class="mb-10">
+<h1 class="text-2xl font-black text-green-700 dark:text-green-500 tracking-tight">NutriNova</h1>
+<p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">Admin Console</p>
+</div>
+<button class="mb-8 flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-secondary text-on-primary py-3 px-4 rounded-xl font-bold shadow-sm hover:scale-[1.02] transition-transform" id="add-user-btn" type="button">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>New Insight</span>
+</button>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-semibold">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-green-700 dark:text-green-400 font-bold border-r-4 border-green-600 dark:border-green-400 bg-green-50/50 dark:bg-green-900/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-semibold">User Management</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="text-sm font-semibold">Nutrition Management</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="text-sm font-semibold">Shop Management</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="text-sm font-semibold">Community Management</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="text-sm font-semibold">Sport Coaching</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-200 dark:border-slate-800 space-y-1">
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-semibold">Settings</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200" href="login.php" onclick="event.preventDefault(); adminLogout();">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-sm font-semibold">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-72">
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-18rem)] h-20 bg-white/70 backdrop-blur-xl z-40 flex justify-between items-center px-12">
+<div class="flex items-center gap-6">
+<h2 class="text-xl font-bold text-blue-900 tracking-tight">Admin Dashboard</h2>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="bg-surface-container-high border-none rounded-full py-2.5 pl-12 pr-6 w-80 text-sm focus:ring-2 focus:ring-primary/20 transition-all" id="search-input" placeholder="Search members..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-slate-500 hover:text-blue-600 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+<button class="text-slate-500 hover:text-blue-600 transition-all">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border-2 border-surface-container-highest">
+<img alt="Administrator Profile" data-alt="Close-up portrait of a professional male administrator in a modern office setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdqyZcUAEldlb2PyYUDyTniob3ErEBtQP6eCYS_hNIHkAaReP7tZwBliu2M8nKpmjniuU-p8xdNqtMOU7YsZRkEmx7JwE8kCAIrlvZVKaVW3LIsSy8TdmRB3AB_kcSQklAz_e9NsLRwQhVQwtk2u0Bi6xCn0npqxStKp8AUCbCSkIFY1gAgnBPNu5wAt_QH49cMwfGAczX1EANb2YDzqopQRIORl-T9goHG-azA8rvnptOVmR7R9U05hy-EtJqb0O0Ydsthiqf8_PT"/>
+</div>
+</div>
+</header>
+<!-- Canvas Body -->
+<div class="pt-28 px-12 pb-12">
+<!-- Bento Dashboard Header -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<!-- Total Users -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl flex flex-col gap-4 group hover:scale-[1.01] transition-transform duration-300">
+<div class="flex items-center justify-between">
+<div class="p-3 bg-secondary/10 rounded-2xl">
+<span class="material-symbols-outlined text-secondary">groups</span>
+</div>
+<span class="text-xs font-bold text-tertiary px-3 py-1 bg-tertiary/10 rounded-full">Insight</span>
+</div>
+<div>
+<p class="text-slate-500 text-sm font-medium">Total Users</p>
+<h3 class="text-4xl font-extrabold text-on-surface tracking-tight mt-1" id="stat-total-users">0</h3>
+</div>
+<div class="flex items-center gap-2 text-xs text-green-600 font-semibold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12% from last month</span>
+</div>
+</div>
+<!-- Active Users -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl flex flex-col gap-4 border-b-4 border-primary shadow-sm hover:scale-[1.01] transition-transform duration-300">
+<div class="flex items-center justify-between">
+<div class="p-3 bg-primary/10 rounded-2xl">
+<span class="material-symbols-outlined text-primary">person_check</span>
+</div>
+<div class="flex gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] font-bold text-primary uppercase">Live</span>
+</div>
+</div>
+<div>
+<p class="text-slate-500 text-sm font-medium">Active Users</p>
+<h3 class="text-4xl font-extrabold text-on-surface tracking-tight mt-1" id="stat-active-users">0</h3>
+</div>
+<div class="flex items-center gap-2 text-xs text-primary font-semibold">
+<span class="material-symbols-outlined text-sm">bolt</span>
+<span>Real-time Engagement</span>
+</div>
+</div>
+<!-- New Registrations -->
+<div class="bg-gradient-to-br from-primary to-secondary p-8 rounded-3xl flex flex-col gap-4 text-white hover:scale-[1.01] transition-transform duration-300">
+<div class="flex items-center justify-between">
+<div class="p-3 bg-white/20 backdrop-blur-md rounded-2xl">
+<span class="material-symbols-outlined text-white">person_add</span>
+</div>
+</div>
+<div>
+<p class="text-white/80 text-sm font-medium">New Registrations</p>
+<h3 class="text-4xl font-extrabold tracking-tight mt-1" id="stat-new-users">0</h3>
+</div>
+<div class="flex items-center gap-2 text-xs font-semibold">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>In the last 24 hours</span>
+</div>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm">
+<div class="px-8 py-6 flex items-center justify-between border-b border-surface-container-high">
+<h3 class="text-xl font-bold text-on-surface">User Directory</h3>
+<div class="flex gap-3">
+<button class="bg-surface-container-high text-on-surface-variant px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-surface-container-highest transition-colors flex items-center gap-2" id="reload-users-btn" type="button">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                            Filter
+                        </button>
+<button class="bg-primary-container text-on-primary-container px-5 py-2.5 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity flex items-center gap-2" id="export-users-btn" type="button">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Export CSV
+                        </button>
+</div>
+</div>
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50 text-slate-500">
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">ID</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Nom</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Prenom</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Email</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Mot de passe</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Taille</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Poids</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Objectif</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Niveau</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Inscription</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Statut</th>
+<th class="py-5 px-8 text-xs font-bold uppercase tracking-widest text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high" id="users-table-body">
+<tr>
+<td class="py-5 px-8 text-sm text-slate-500" colspan="12">Chargement des utilisateurs...</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-8 py-6 bg-surface-container-low/20 flex items-center justify-between">
+<span class="text-sm text-slate-500" id="users-count-label">Showing 0 users</span>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-surface-container-high text-slate-400 hover:bg-white transition-colors" disabled type="button">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold shadow-md shadow-primary/20" id="page-indicator" type="button">1</button>
+<button class="hidden w-10 h-10 items-center justify-center rounded-xl border border-surface-container-high text-slate-600 hover:bg-white transition-colors font-semibold" type="button">2</button>
+<button class="hidden w-10 h-10 items-center justify-center rounded-xl border border-surface-container-high text-slate-600 hover:bg-white transition-colors font-semibold" type="button">3</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-surface-container-high text-slate-400 hover:bg-white transition-colors" disabled type="button">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Contextual Insight Panel -->
+<div class="mt-12 p-8 bg-surface-container-low rounded-3xl relative overflow-hidden">
+<div class="relative z-10 max-w-2xl">
+<span class="bg-tertiary text-white text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded mb-3 inline-block">AI Insight</span>
+<h4 class="text-2xl font-bold text-on-surface mb-4">Registration Velocity is peaking</h4>
+<p class="text-slate-600 leading-relaxed">Your user acquisition rate has increased by <span class="text-primary font-bold">14.2%</span> over the last 72 hours. Most new registrations are originating from the "Healthy Breakfast" community segment.</p>
+</div>
+<!-- Glassmorphic Decorative Element -->
+<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-gradient-to-tr from-primary/20 to-secondary/20 rounded-full blur-3xl opacity-50"></div>
+<div class="absolute right-12 top-1/2 -translate-y-1/2 hidden lg:block">
+<div class="w-32 h-32 rounded-2xl bg-white/40 backdrop-blur-md border border-white/50 shadow-xl flex items-center justify-center rotate-12">
+<span class="material-symbols-outlined text-5xl text-primary" style="font-variation-settings: 'FILL' 1;">insights</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div id="toast" class="fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded hidden z-50"></div>
+<script src="user1.js"></script>
+
+
+</body></html>
