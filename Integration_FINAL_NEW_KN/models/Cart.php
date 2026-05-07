@@ -56,10 +56,10 @@ class Cart {
      * @return array Response
      */
     public function addProduct($data) {
-        $userEmail = isset($data['user_email']) ? $this->db->escapeString(trim($data['user_email'])) : '';
-        $nom = $this->db->escapeString(trim($data['nom']));
+        $userEmail = isset($data['user_email']) ? trim($data['user_email']) : '';
+        $nom = trim($data['nom']);
         $prix = floatval($data['prix']);
-        $description = isset($data['description']) ? $this->db->escapeString(trim($data['description'])) : '';
+        $description = isset($data['description']) ? trim($data['description']) : '';
 
         // Validate required fields
         if (empty($nom) || $prix < 0) {
@@ -71,18 +71,23 @@ class Cart {
         }
 
         // Insert product to cart
-        $insert_sql = "INSERT INTO {$this->table} (user_email, Nom, Prix, Description) VALUES ('" . $userEmail . "', '" . $nom . "', " . $prix . ", '" . $description . "')";
+        $stmt = $this->conn->prepare("INSERT INTO {$this->table} (user_email, Nom, Prix, Description) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param('ssds', $userEmail, $nom, $prix, $description);
 
-        if ($this->conn->query($insert_sql)) {
+        if ($stmt->execute()) {
+            $id = $stmt->insert_id;
+            $stmt->close();
             return [
                 'success' => true,
                 'message' => 'Product added to cart',
-                'id' => $this->conn->insert_id
+                'id' => $id
             ];
         } else {
+            $error = $stmt->error;
+            $stmt->close();
             return [
                 'success' => false,
-                'error' => 'Database error: ' . $this->conn->error,
+                'error' => 'Database error: ' . $error,
                 'code' => 'DB_ERROR'
             ];
         }
@@ -94,21 +99,20 @@ class Cart {
      * @return array Cart items
      */
     public function getAll($email = null) {
-        $sql = "SELECT id, user_email, Nom, Prix, Description, created_at FROM {$this->table}";
         if (!empty($email)) {
-            $email = $this->db->escapeString(trim($email));
-            $sql .= " WHERE user_email = '" . $email . "'";
+            $stmt = $this->conn->prepare("SELECT id, user_email, Nom, Prix, Description, created_at FROM {$this->table} WHERE user_email = ? ORDER BY created_at DESC");
+            $stmt->bind_param('s', $email);
+        } else {
+            $stmt = $this->conn->prepare("SELECT id, user_email, Nom, Prix, Description, created_at FROM {$this->table} ORDER BY created_at DESC");
         }
-        $sql .= " ORDER BY created_at DESC";
-
-        $result = $this->conn->query($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
         
         $items = [];
-        if ($result && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $items[] = $row;
-            }
+        while ($row = $result->fetch_assoc()) {
+            $items[] = $row;
         }
+        $stmt->close();
         return $items;
     }
 
@@ -119,13 +123,14 @@ class Cart {
      */
     public function getById($id) {
         $id = intval($id);
-        $sql = "SELECT * FROM {$this->table} WHERE id = " . $id;
-        $result = $this->conn->query($sql);
+        $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE id = ?");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
         
-        if ($result && $result->num_rows > 0) {
-            return $result->fetch_assoc();
-        }
-        return null;
+        $item = $result->fetch_assoc();
+        $stmt->close();
+        return $item;
     }
 
     /**
@@ -135,7 +140,7 @@ class Cart {
      */
     public function removeProduct($id, $email = '') {
         $id = intval($id);
-        $email = $this->db->escapeString(trim($email));
+        $email = trim($email);
 
         if (!$id) {
             return [
@@ -146,13 +151,18 @@ class Cart {
         }
 
         // Delete product from cart
-        $delete_sql = "DELETE FROM {$this->table} WHERE id = " . $id;
         if (!empty($email)) {
-            $delete_sql .= " AND user_email = '" . $email . "'";
+            $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE id = ? AND user_email = ?");
+            $stmt->bind_param('is', $id, $email);
+        } else {
+            $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE id = ?");
+            $stmt->bind_param('i', $id);
         }
 
-        if ($this->conn->query($delete_sql)) {
-            if ($this->conn->affected_rows > 0) {
+        if ($stmt->execute()) {
+            $affected = $stmt->affected_rows;
+            $stmt->close();
+            if ($affected > 0) {
                 return [
                     'success' => true,
                     'message' => 'Product removed from cart'
@@ -165,9 +175,11 @@ class Cart {
                 ];
             }
         } else {
+            $error = $stmt->error;
+            $stmt->close();
             return [
                 'success' => false,
-                'error' => 'Database error: ' . $this->conn->error,
+                'error' => 'Database error: ' . $error,
                 'code' => 'DB_ERROR'
             ];
         }
@@ -181,18 +193,22 @@ class Cart {
      * @return array Response
      */
     public function removeByNameAndPrice($nom, $prix, $email = '') {
-        $nom = $this->db->escapeString(trim($nom));
+        $nom = trim($nom);
         $prix = floatval($prix);
-        $email = $this->db->escapeString(trim($email));
+        $email = trim($email);
 
-        $delete_sql = "DELETE FROM {$this->table} WHERE Nom = '" . $nom . "' AND Prix = " . $prix;
         if (!empty($email)) {
-            $delete_sql .= " AND user_email = '" . $email . "'";
+            $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE Nom = ? AND Prix = ? AND user_email = ? LIMIT 1");
+            $stmt->bind_param('sds', $nom, $prix, $email);
+        } else {
+            $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE Nom = ? AND Prix = ? LIMIT 1");
+            $stmt->bind_param('sd', $nom, $prix);
         }
-        $delete_sql .= " LIMIT 1";
 
-        if ($this->conn->query($delete_sql)) {
-            if ($this->conn->affected_rows > 0) {
+        if ($stmt->execute()) {
+            $affected = $stmt->affected_rows;
+            $stmt->close();
+            if ($affected > 0) {
                 return [
                     'success' => true,
                     'message' => 'Product removed from cart'
@@ -205,9 +221,11 @@ class Cart {
                 ];
             }
         } else {
+            $error = $stmt->error;
+            $stmt->close();
             return [
                 'success' => false,
-                'error' => 'Database error: ' . $this->conn->error,
+                'error' => 'Database error: ' . $error,
                 'code' => 'DB_ERROR'
             ];
         }
@@ -218,17 +236,20 @@ class Cart {
      * @return array Response
      */
     public function clear() {
-        $delete_sql = "DELETE FROM {$this->table}";
+        $stmt = $this->conn->prepare("DELETE FROM {$this->table}");
 
-        if ($this->conn->query($delete_sql)) {
+        if ($stmt->execute()) {
+            $stmt->close();
             return [
                 'success' => true,
                 'message' => 'Cart cleared successfully'
             ];
         } else {
+            $error = $stmt->error;
+            $stmt->close();
             return [
                 'success' => false,
-                'error' => 'Database error: ' . $this->conn->error,
+                'error' => 'Database error: ' . $error,
                 'code' => 'DB_ERROR'
             ];
         }
@@ -239,16 +260,19 @@ class Cart {
      * @return array Global stats
      */
     public function getGlobalStats() {
-        $sql = "SELECT SUM(Prix) as total_revenue, COUNT(*) as total_orders FROM {$this->table}";
-        $result = $this->conn->query($sql);
+        $stmt = $this->conn->prepare("SELECT SUM(Prix) as total_revenue, COUNT(*) as total_orders FROM {$this->table}");
+        $stmt->execute();
+        $result = $stmt->get_result();
         
         if ($result && $result->num_rows > 0) {
             $row = $result->fetch_assoc();
+            $stmt->close();
             return [
                 'total_revenue' => $row['total_revenue'] ?? 0,
                 'total_orders' => $row['total_orders'] ?? 0
             ];
         }
+        $stmt->close();
         return [
             'total_revenue' => 0,
             'total_orders' => 0

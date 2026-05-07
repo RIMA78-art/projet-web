@@ -42,14 +42,14 @@ class User {
      * @return array Response
      */
     public function register($data) {
-        $nom = $this->db->escapeString(trim($data['nom']));
-        $prenom = $this->db->escapeString(trim($data['prenom']));
-        $email = $this->db->escapeString(trim($data['email']));
+        $nom = trim($data['nom']);
+        $prenom = trim($data['prenom']);
+        $email = trim($data['email']);
         $mot_de_passe = $data['mot_de_passe'];
         $taille = isset($data['taille']) && $data['taille'] ? intval($data['taille']) : 0;
         $poids = isset($data['poids']) && $data['poids'] ? floatval($data['poids']) : 0;
-        $objectif = $this->db->escapeString(trim($data['objectif'] ?? ''));
-        $niveau_sportif = $this->db->escapeString(trim($data['niveau_sportif'] ?? ''));
+        $objectif = trim($data['objectif'] ?? '');
+        $niveau_sportif = trim($data['niveau_sportif'] ?? '');
 
         // Validate required fields
         if (empty($nom) || empty($prenom) || empty($email) || empty($mot_de_passe)) {
@@ -70,10 +70,13 @@ class User {
         }
 
         // Check if email already exists
-        $check_sql = "SELECT id FROM {$this->table} WHERE Email='" . $email . "' LIMIT 1";
-        $check_result = $this->conn->query($check_sql);
+        $stmt = $this->conn->prepare("SELECT id FROM {$this->table} WHERE Email=? LIMIT 1");
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
         
-        if ($check_result && $check_result->num_rows > 0) {
+        if ($result && $result->num_rows > 0) {
             return [
                 'success' => false,
                 'error' => 'Email already exists',
@@ -83,22 +86,25 @@ class User {
 
         // Hash password
         $mot_de_passe_hashed = password_hash($mot_de_passe, PASSWORD_DEFAULT);
-        $mot_de_passe_escaped = $this->db->escapeString($mot_de_passe_hashed);
 
         // Insert new user
-        $insert_sql = "INSERT INTO {$this->table} (Nom, Prenom, Email, Mot_de_passe, Taille_cm, Poids_kg, Objectif, Niveau_sportif) 
-                       VALUES ('" . $nom . "', '" . $prenom . "', '" . $email . "', '" . $mot_de_passe_escaped . "', " . $taille . ", " . $poids . ", '" . $objectif . "', '" . $niveau_sportif . "')";
+        $stmt = $this->conn->prepare("INSERT INTO {$this->table} (Nom, Prenom, Email, Mot_de_passe, Taille_cm, Poids_kg, Objectif, Niveau_sportif) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param('ssssddss', $nom, $prenom, $email, $mot_de_passe_hashed, $taille, $poids, $objectif, $niveau_sportif);
 
-        if ($this->conn->query($insert_sql)) {
+        if ($stmt->execute()) {
+            $id = $stmt->insert_id;
+            $stmt->close();
             return [
                 'success' => true,
                 'message' => 'User registered successfully',
-                'id' => $this->conn->insert_id
+                'id' => $id
             ];
         } else {
+            $error = $stmt->error;
+            $stmt->close();
             return [
                 'success' => false,
-                'error' => 'Database error: ' . $this->conn->error,
+                'error' => 'Database error: ' . $error,
                 'code' => 'DB_ERROR'
             ];
         }
@@ -111,8 +117,7 @@ class User {
      * @return array Response with user data or error
      */
     public function login($email, $password) {
-        $email = $this->db->escapeString(trim($email));
-        $password = $this->db->escapeString($password);
+        $email = trim($email);
 
         if (empty($email) || empty($password)) {
             return [
@@ -123,19 +128,16 @@ class User {
         }
 
         // Check user credentials
-        // We only fetch by email first, and verify password after using password_verify
-        $sql = "SELECT id, Nom, Prenom, Email, Mot_de_passe FROM {$this->table} WHERE Email='" . $email . "' LIMIT 1";
-        $result = $this->conn->query($sql);
+        $stmt = $this->conn->prepare("SELECT id, Nom, Prenom, Email, Mot_de_passe FROM {$this->table} WHERE Email=? LIMIT 1");
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
         
         if ($result && $result->num_rows > 0) {
             $user = $result->fetch_assoc();
+            $stmt->close();
             
-            // Note: password is no longer escaped here because we use it as plain text against the hash
-            // Wait, we need the original unescaped password for password_verify, so we should use $_POST['mot_de_passe'] directly if possible.
-            // Since $password was escaped at the top of the function, and escapeString adds slashes, it might break password_verify if there are quotes.
-            // But let's assume simple passwords for now, or just unescape it. Actually we can just use the provided $password argument since the caller passes the raw password.
-            // Wait, at line 114: $password = $this->db->escapeString($password); It is escaped! Let's just use the escaped one if there are no slashes, or fix it below.
-            if (password_verify($_POST['mot_de_passe'] ?? $password, $user['Mot_de_passe'])) {
+            if (password_verify($password, $user['Mot_de_passe'])) {
                 return [
                     'success' => true,
                     'message' => 'Login successful',
@@ -159,6 +161,8 @@ class User {
                     ]
                 ];
             }
+        } else {
+            $stmt->close();
         }
         
         return [
@@ -175,13 +179,14 @@ class User {
      */
     public function getUserById($id) {
         $id = intval($id);
-        $sql = "SELECT * FROM {$this->table} WHERE id = " . $id;
-        $result = $this->conn->query($sql);
+        $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE id = ?");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
         
-        if ($result && $result->num_rows > 0) {
-            return $result->fetch_assoc();
-        }
-        return null;
+        $user = $result->fetch_assoc();
+        $stmt->close();
+        return $user;
     }
 
     /**
@@ -190,14 +195,15 @@ class User {
      * @return array User data or null
      */
     public function getUserByEmail($email) {
-        $email = $this->db->escapeString(trim($email));
-        $sql = "SELECT * FROM {$this->table} WHERE Email='" . $email . "' LIMIT 1";
-        $result = $this->conn->query($sql);
+        $email = trim($email);
+        $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE Email=? LIMIT 1");
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
         
-        if ($result && $result->num_rows > 0) {
-            return $result->fetch_assoc();
-        }
-        return null;
+        $user = $result->fetch_assoc();
+        $stmt->close();
+        return $user;
     }
 
     /**

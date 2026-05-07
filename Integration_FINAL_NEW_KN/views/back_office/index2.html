@@ -110,6 +110,7 @@
             background-color: rgba(76, 175, 80, 0.1);
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body class="bg-surface text-on-surface min-h-screen">
 
@@ -185,7 +186,8 @@
         </a>
         <div class="relative w-96 ml-8">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-            <input class="w-full pl-10 pr-4 py-2 bg-surface-container-high border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20" placeholder="Search..." type="text"/>
+            <input id="order-search-input" class="w-full pl-10 pr-4 py-2 bg-surface-container-high border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20" placeholder="Search customer name..." type="text"/>
+            <p id="order-search-message" class="mt-2 text-xs text-slate-500 hidden"></p>
         </div>
     </div>
     <div class="flex items-center gap-6">
@@ -591,6 +593,63 @@
                     <p class="text-xs text-tertiary mt-2 font-bold">Items below 15% threshold</p>
                 </div>
             </div>
+
+            <div class="col-span-12 md:col-span-6 bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-slate-500 font-medium text-sm">Orders Profit</p>
+                        <h2 id="orders-profit-total" class="text-4xl font-black mt-2 tracking-tighter text-on-surface">$0.00</h2>
+                    </div>
+                    <div class="bg-primary/10 p-3 rounded-xl">
+                        <span class="material-symbols-outlined text-primary">sell</span>
+                    </div>
+                </div>
+                <div class="text-xs font-bold text-slate-500 mt-3">
+                    Total profit from confirmed orders
+                </div>
+            </div>
+
+            <div class="col-span-12 md:col-span-6 bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-slate-500 font-medium text-sm">Confirmed Orders</p>
+                        <h2 id="orders-confirmed-count" class="text-4xl font-black mt-2 tracking-tighter text-on-surface">0</h2>
+                    </div>
+                    <div class="bg-secondary-container/20 p-3 rounded-xl text-secondary">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                    </div>
+                </div>
+                <div class="text-xs font-bold text-slate-500 mt-3">
+                    Successfully confirmed by customers
+                </div>
+            </div>
+        </div>
+
+        <!-- Popular Items Chart -->
+        <div class="bg-surface-container-low rounded-xl p-1 overflow-hidden mb-8">
+            <div class="bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h3 class="text-2xl font-black tracking-tight">Top 3 Popular Products</h3>
+                        <p class="text-sm text-slate-500 mt-1">Based on recent confirmed orders and unique customer purchases.</p>
+                    </div>
+                    <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">Top 3</span>
+                </div>
+                <div class="w-full">
+                    <canvas id="popular-items-chart" style="max-height: 320px; min-height: 320px;"></canvas>
+                </div>
+                <p id="popular-items-empty" class="mt-4 text-sm text-slate-500 hidden">No confirmed orders yet. The chart appears once customers place orders.</p>
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="rounded-lg bg-slate-50 p-4">
+                        <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Total Units Sold</p>
+                        <p id="popular-total-units" class="text-2xl font-black text-on-surface mt-2">0</p>
+                    </div>
+                    <div class="rounded-lg bg-slate-50 p-4">
+                        <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Revenue from Top Items</p>
+                        <p id="popular-total-revenue" class="text-2xl font-black text-on-surface mt-2">$0.00</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Product Inventory Table -->
@@ -643,6 +702,32 @@
                                         </button>
                                     </div>
                                 </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-surface-container-low rounded-xl p-1 overflow-hidden mt-8">
+            <div class="bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-2xl font-black tracking-tight">Recent Confirmed Orders</h3>
+                </div>
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-surface-container-high">
+                                <th class="pb-4 pt-2 px-4 text-[10px] uppercase tracking-widest font-black text-slate-400">Customer</th>
+                                <th class="pb-4 pt-2 px-4 text-[10px] uppercase tracking-widest font-black text-slate-400">Telephone</th>
+                                <th class="pb-4 pt-2 px-4 text-[10px] uppercase tracking-widest font-black text-slate-400 text-right">Total</th>
+                                <th class="pb-4 pt-2 px-4 text-[10px] uppercase tracking-widest font-black text-slate-400 text-right">Date</th>
+                                <th class="pb-4 pt-2 px-4 text-[10px] uppercase tracking-widest font-black text-slate-400 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-recent-list" class="divide-y divide-surface-container-high">
+                            <tr>
+                                <td colspan="5" class="py-6 px-4 text-center text-slate-500">No confirmed orders yet.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -840,8 +925,48 @@
 
 </main>
 
+<div id="order-details-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+    <div class="w-full max-w-3xl rounded-[28px] bg-white shadow-2xl overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200">
+            <div>
+                <p id="order-details-customer" class="text-sm text-slate-500"></p>
+                <h3 id="order-details-title" class="text-2xl font-bold text-on-surface">Order Details</h3>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="order-details-delete-button" onclick="confirmDeleteOrder()" class="rounded-full border border-red-200 bg-red-50 text-red-700 px-4 py-2 text-sm font-semibold hover:bg-red-100 transition">Delete</button>
+                <button onclick="closeOrderDetails()" class="text-slate-500 hover:text-slate-800 transition"><span class="material-symbols-outlined">close</span></button>
+            </div>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+            <div class="rounded-3xl bg-surface-container-low p-5">
+                <div id="order-details-items" class="space-y-3"></div>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div class="rounded-3xl bg-surface-container-low p-5">
+                    <p class="text-xs uppercase tracking-widest text-slate-500">Total</p>
+                    <p id="order-details-total" class="mt-2 text-3xl font-bold text-on-surface">$0.00</p>
+                </div>
+                <div class="rounded-3xl bg-surface-container-low p-5">
+                    <p class="text-xs uppercase tracking-widest text-slate-500">Telephone</p>
+                    <p id="order-details-phone" class="mt-2 text-lg font-semibold text-on-surface">-</p>
+                </div>
+            </div>
+            <div class="rounded-3xl bg-surface-container-low p-5">
+                <p class="text-xs uppercase tracking-widest text-slate-500">Delivery Address</p>
+                <p id="order-details-address" class="mt-2 text-sm text-slate-700"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     let shopRefreshInterval = null;
+    let currentOrderDetailsId = null;
+    let orderSearchTimeout = null;
+    let orderSearchRequestId = 0;
+    let currentOrderSearchCount = 0;
+    let currentOrderSearchTerm = '';
+    let orderSearchResults = [];
 
     function renderShopStats(data) {
         if (!data || !data.success) return;
@@ -897,6 +1022,289 @@
             .catch(err => console.error("Error fetching shop stats:", err));
     }
 
+    function renderOrderStats(data) {
+        if (!data || !data.success) return;
+
+        const profitElem = document.getElementById('orders-profit-total');
+        if (profitElem) profitElem.innerText = '$' + parseFloat(data.profit || 0).toFixed(2);
+
+        const countElem = document.getElementById('orders-confirmed-count');
+        if (countElem) countElem.innerText = data.orders || 0;
+
+        const tbody = document.getElementById('orders-recent-list');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        if (data.recent_orders && data.recent_orders.length > 0) {
+            data.recent_orders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-surface-container-low transition-colors";
+                tr.innerHTML = `
+                    <td class="py-6 px-4">
+                        <p class="font-bold text-on-surface leading-tight">${order.customer_name || 'Unknown'}</p>
+                    </td>
+                    <td class="py-6 px-4">
+                        <span class="px-3 py-1 bg-surface-container rounded-full text-xs font-bold text-slate-600">${order.telephone || '-'}</span>
+                    </td>
+                    <td class="py-6 px-4 text-right font-bold text-on-surface">$${parseFloat(order.total_price || 0).toFixed(2)}</td>
+                    <td class="py-6 px-4 text-right">
+                        <p class="text-[10px] font-bold text-slate-500">${new Date(order.created_at).toLocaleString()}</p>
+                    </td>
+                    <td class="py-6 px-4 text-right">
+                        <button onclick="showOrderDetails(${order.id})" class="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">Details</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="5" class="py-6 px-4 text-center text-slate-500">No confirmed orders yet.</td>`;
+            tbody.appendChild(tr);
+        }
+    }
+
+    function showOrderSearchMessage(message, isError = false) {
+        const msg = document.getElementById('order-search-message');
+        if (!msg) return;
+        msg.innerText = message;
+        msg.classList.remove('text-red-500', 'text-slate-500', 'hidden');
+        msg.classList.add(isError ? 'text-red-500' : 'text-slate-500');
+    }
+
+    function hideOrderSearchMessage() {
+        const msg = document.getElementById('order-search-message');
+        if (!msg) return;
+        msg.classList.add('hidden');
+    }
+
+    function renderOrderSearchResults(orders) {
+        const tbody = document.getElementById('orders-recent-list');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        if (orders && orders.length > 0) {
+            orders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-surface-container-low transition-colors";
+                tr.innerHTML = `
+                    <td class="py-6 px-4">
+                        <p class="font-bold text-on-surface leading-tight">${order.customer_name || 'Unknown'}</p>
+                    </td>
+                    <td class="py-6 px-4">
+                        <span class="px-3 py-1 bg-surface-container rounded-full text-xs font-bold text-slate-600">${order.telephone || '-'}</span>
+                    </td>
+                    <td class="py-6 px-4 text-right font-bold text-on-surface">$${parseFloat(order.total_price || 0).toFixed(2)}</td>
+                    <td class="py-6 px-4 text-right">
+                        <p class="text-[10px] font-bold text-slate-500">${new Date(order.created_at).toLocaleString()}</p>
+                    </td>
+                    <td class="py-6 px-4 text-right">
+                        <button onclick="showOrderDetails(${order.id})" class="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">Details</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="5" class="py-6 px-4 text-center text-slate-500">No confirmed orders found.</td>`;
+            tbody.appendChild(tr);
+        }
+    }
+
+    function searchOrders(term) {
+        currentOrderSearchTerm = term;
+        const requestId = ++orderSearchRequestId;
+
+        const body = new URLSearchParams();
+        body.append('term', term);
+
+        fetch('../../controllers/index.php?action=search_orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString()
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (requestId !== orderSearchRequestId) {
+                    return;
+                }
+
+                if (!data || !data.success) {
+                    showOrderSearchMessage('Unable to search orders.', true);
+                    orderSearchResults = [];
+                    currentOrderSearchCount = 0;
+                    return;
+                }
+
+                orderSearchResults = data.orders || [];
+                currentOrderSearchCount = orderSearchResults.length;
+
+                if (currentOrderSearchCount > 0) {
+                    showOrderSearchMessage(`${currentOrderSearchCount} order(s) found. Press Enter to open the first match.`);
+                    renderOrderSearchResults(orderSearchResults);
+                } else {
+                    showOrderSearchMessage('Customer does not exist.', true);
+                    renderOrderSearchResults([]);
+                }
+            })
+            .catch(err => {
+                if (requestId !== orderSearchRequestId) {
+                    return;
+                }
+                console.error('Error searching orders:', err);
+                showOrderSearchMessage('Unable to search orders.', true);
+                orderSearchResults = [];
+                currentOrderSearchCount = 0;
+            });
+    }
+
+    function handleOrderSearchKeyUp(event) {
+        const term = event.target.value.trim();
+
+        if (orderSearchTimeout) {
+            clearTimeout(orderSearchTimeout);
+        }
+
+        if (term === '') {
+            hideOrderSearchMessage();
+            currentOrderSearchCount = 0;
+            orderSearchResults = [];
+            fetchOrderStats();
+            return;
+        }
+
+        orderSearchTimeout = setTimeout(() => searchOrders(term), 300);
+    }
+
+    function handleOrderSearchKeyDown(event) {
+        if (event.key !== 'Enter') {
+            return;
+        }
+
+        event.preventDefault();
+        const term = event.target.value.trim();
+        if (term === '') {
+            return;
+        }
+
+        if (currentOrderSearchCount === 0) {
+            showOrderSearchMessage('Customer does not exist.', true);
+        } else if (orderSearchResults.length > 0) {
+            showOrderDetails(orderSearchResults[0].id);
+        }
+    }
+
+    function showOrderDetails(orderId) {
+        currentOrderDetailsId = orderId;
+        const modal = document.getElementById('order-details-modal');
+        const title = document.getElementById('order-details-title');
+        const customer = document.getElementById('order-details-customer');
+        const phone = document.getElementById('order-details-phone');
+        const address = document.getElementById('order-details-address');
+        const itemsContainer = document.getElementById('order-details-items');
+
+        if (!modal || !title || !customer || !phone || !address || !itemsContainer) return;
+
+        modal.classList.remove('hidden');
+        title.innerText = 'Order details';
+        customer.innerText = '';
+        phone.innerText = '';
+        address.innerText = '';
+        itemsContainer.innerHTML = '<p class="text-slate-500">Loading order details...</p>';
+
+        fetch(`../../controllers/index.php?action=get_order_details&id=${orderId}`, { cache: 'no-store' })
+            .then(response => response.json())
+            .then(data => {
+                if (!data || !data.success || !data.order) {
+                    itemsContainer.innerHTML = `<p class="text-red-500">Unable to load order details.</p>`;
+                    return;
+                }
+
+                const order = data.order;
+                customer.innerText = order.customer_name || 'Unknown customer';
+                phone.innerText = order.telephone || '-';
+                address.innerText = order.address || '-';
+                document.getElementById('order-details-total').innerText = `$${parseFloat(order.total_price || 0).toFixed(2)}`;
+
+                if (order.items && order.items.length > 0) {
+                    itemsContainer.innerHTML = '';
+                    order.items.forEach(item => {
+                        const itemEl = document.createElement('div');
+                        itemEl.className = 'rounded-2xl border border-surface-container-highest bg-white p-4';
+                        itemEl.innerHTML = `
+                            <div class="flex items-center justify-between gap-4">
+                                <div>
+                                    <p class="font-semibold text-on-surface">${item.product_name}</p>
+                                    <p class="text-xs text-slate-500 mt-1">${item.quantity} x $${parseFloat(item.unit_price || 0).toFixed(2)}</p>
+                                </div>
+                                <p class="font-bold text-on-surface">$${parseFloat(item.total_price || 0).toFixed(2)}</p>
+                            </div>
+                        `;
+                        itemsContainer.appendChild(itemEl);
+                    });
+                } else {
+                    itemsContainer.innerHTML = `<p class="text-slate-500">No items recorded for this order.</p>`;
+                }
+            })
+            .catch(err => {
+                console.error('Error loading order details:', err);
+                itemsContainer.innerHTML = `<p class="text-red-500">Unable to load order details.</p>`;
+            });
+    }
+
+    function confirmDeleteOrder() {
+        if (!currentOrderDetailsId) {
+            alert('No order selected.');
+            return;
+        }
+
+        if (!confirm('Delete this order and all its items?')) {
+            return;
+        }
+
+        deleteOrder(currentOrderDetailsId);
+    }
+
+    function deleteOrder(orderId) {
+        const body = new URLSearchParams();
+        body.append('id', orderId);
+
+        fetch('../../controllers/index.php?action=delete_order', {
+            method: 'POST',
+            body: body
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data || !data.success) {
+                    alert(data?.error || 'Unable to delete order.');
+                    return;
+                }
+
+                alert('Order deleted successfully.');
+                closeOrderDetails();
+                fetchOrderStats();
+            })
+            .catch(err => {
+                console.error('Error deleting order:', err);
+                alert('Unable to delete order.');
+            });
+    }
+
+    function closeOrderDetails() {
+        const modal = document.getElementById('order-details-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function fetchOrderStats() {
+        fetch('../../controllers/index.php?action=order_admin_stats', { cache: 'no-store' })
+            .then(response => response.json())
+            .then(data => {
+                renderOrderStats(data);
+            })
+            .catch(err => console.error("Error fetching order stats:", err));
+    }
+
     function removeShopItem(itemId, userEmail) {
         if (!itemId) return;
         if (!confirm('Delete this item from database and carts?')) return;
@@ -926,10 +1334,161 @@
             });
     }
 
+    let popularItemsChart = null;
+
+    function fetchPopularItems() {
+        fetch('../../controllers/index.php?action=get_popular_items&limit=3', { cache: 'no-store' })
+            .then(response => response.json())
+            .then(data => {
+                renderPopularItemsChart(data);
+            })
+            .catch(err => console.error("Error fetching popular items:", err));
+    }
+
+    function renderPopularItemsChart(data) {
+        const emptyNotice = document.getElementById('popular-items-empty');
+        const canvas = document.getElementById('popular-items-chart');
+
+        if (!data || !data.success || !data.items || data.items.length === 0) {
+            if (canvas && canvas.getContext) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            if (emptyNotice) {
+                emptyNotice.classList.remove('hidden');
+            }
+            return;
+        }
+
+        if (emptyNotice) {
+            emptyNotice.classList.add('hidden');
+        }
+
+        const items = data.items;
+        const labels = items.map(item => item.product_name);
+        const quantities = items.map(item => item.total_quantity);
+        const customers = items.map(item => item.unique_customers);
+        const revenues = items.map(item => item.total_revenue);
+
+        const totalUnits = quantities.reduce((sum, q) => sum + q, 0);
+        const totalRevenue = revenues.reduce((sum, r) => sum + r, 0);
+
+        document.getElementById('popular-total-units').innerText = totalUnits.toLocaleString();
+        document.getElementById('popular-total-revenue').innerText = '$' + totalRevenue.toFixed(2);
+
+        const ctx = document.getElementById('popular-items-chart').getContext('2d');
+
+        if (popularItemsChart) {
+            popularItemsChart.destroy();
+        }
+
+        popularItemsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Units Sold',
+                        data: quantities,
+                        backgroundColor: '#006e1c',
+                        borderColor: '#004d12',
+                        borderWidth: 1,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Unique Customers',
+                        data: customers,
+                        backgroundColor: '#0060a8',
+                        borderColor: '#003d6b',
+                        borderWidth: 1,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: { size: 12, weight: '600' },
+                            color: '#3f4a3c',
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: { size: 13, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        borderColor: '#ccc',
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Units Sold',
+                            font: { weight: 'bold' }
+                        },
+                        ticks: {
+                            color: '#6f7a6b',
+                            font: { size: 11 }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Unique Buyers',
+                            font: { weight: 'bold' }
+                        },
+                        ticks: {
+                            color: '#6f7a6b',
+                            font: { size: 11 }
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#6f7a6b',
+                            font: { size: 10 }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     function startShopAutoRefresh() {
         fetchShopStats();
+        fetchOrderStats();
+        fetchPopularItems();
         if (shopRefreshInterval) return;
-        shopRefreshInterval = setInterval(fetchShopStats, 3000);
+        shopRefreshInterval = setInterval(() => {
+            fetchShopStats();
+            fetchOrderStats();
+            fetchPopularItems();
+        }, 3000);
     }
 
     function stopShopAutoRefresh() {
@@ -994,6 +1553,19 @@
     document.addEventListener("DOMContentLoaded", function() {
         // Keep one initial fetch so dashboard counters are ready.
         fetchShopStats();
+        fetchOrderStats();
+        fetchPopularItems();
+
+        const searchInput = document.getElementById('order-search-input');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', handleOrderSearchKeyUp);
+            searchInput.addEventListener('keydown', handleOrderSearchKeyDown);
+            searchInput.addEventListener('input', function() {
+                if (this.value.trim() === '') {
+                    hideOrderSearchMessage();
+                }
+            });
+        }
     });
 </script>
 

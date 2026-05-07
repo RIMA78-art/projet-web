@@ -22,31 +22,31 @@ class AdminUser {
      */
     public function getAllUsers($limit = 10, $offset = 0, $search = '') {
         if ($search) {
-            $search = $this->db->escapeString(trim($search));
-            $sql = "SELECT id, Nom, Prenom, Email, Taille_cm, Poids_kg, Niveau_sportif, created_at 
+            $searchTerm = '%' . $search . '%';
+            $stmt = $this->conn->prepare("SELECT id, Nom, Prenom, Email, Taille_cm, Poids_kg, Niveau_sportif, created_at 
                     FROM {$this->table} 
-                    WHERE Nom LIKE '%{$search}%' 
-                    OR Prenom LIKE '%{$search}%' 
-                    OR Email LIKE '%{$search}%'
+                    WHERE Nom LIKE ? 
+                    OR Prenom LIKE ? 
+                    OR Email LIKE ?
                     ORDER BY created_at DESC
-                    LIMIT {$limit} OFFSET {$offset}";
+                    LIMIT ? OFFSET ?");
+            $stmt->bind_param('sssii', $searchTerm, $searchTerm, $searchTerm, $limit, $offset);
         } else {
-            $sql = "SELECT id, Nom, Prenom, Email, Taille_cm, Poids_kg, Niveau_sportif, created_at 
+            $stmt = $this->conn->prepare("SELECT id, Nom, Prenom, Email, Taille_cm, Poids_kg, Niveau_sportif, created_at 
                     FROM {$this->table} 
                     ORDER BY created_at DESC
-                    LIMIT {$limit} OFFSET {$offset}";
+                    LIMIT ? OFFSET ?");
+            $stmt->bind_param('ii', $limit, $offset);
         }
 
-        $result = $this->conn->query($sql);
-
-        if (!$result) {
-            throw new Exception("Error fetching users: " . $this->conn->error);
-        }
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         $users = [];
         while ($row = $result->fetch_assoc()) {
             $users[] = $row;
         }
+        $stmt->close();
 
         return $users;
     }
@@ -58,22 +58,21 @@ class AdminUser {
      */
     public function getUserCount($search = '') {
         if ($search) {
-            $search = $this->db->escapeString(trim($search));
-            $sql = "SELECT COUNT(*) as total FROM {$this->table} 
-                    WHERE Nom LIKE '%{$search}%' 
-                    OR Prenom LIKE '%{$search}%' 
-                    OR Email LIKE '%{$search}%'";
+            $searchTerm = '%' . $search . '%';
+            $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM {$this->table} 
+                    WHERE Nom LIKE ? 
+                    OR Prenom LIKE ? 
+                    OR Email LIKE ?");
+            $stmt->bind_param('sss', $searchTerm, $searchTerm, $searchTerm);
         } else {
-            $sql = "SELECT COUNT(*) as total FROM {$this->table}";
+            $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM {$this->table}");
         }
 
-        $result = $this->conn->query($sql);
-
-        if (!$result) {
-            throw new Exception("Error counting users: " . $this->conn->error);
-        }
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         $row = $result->fetch_assoc();
+        $stmt->close();
         return $row['total'];
     }
 
@@ -85,17 +84,16 @@ class AdminUser {
     public function getUserById($id) {
         $id = intval($id);
 
-        $sql = "SELECT id, Nom, Prenom, Email, Taille_cm, Poids_kg, Objectif, Niveau_sportif, created_at 
+        $stmt = $this->conn->prepare("SELECT id, Nom, Prenom, Email, Taille_cm, Poids_kg, Objectif, Niveau_sportif, created_at 
                 FROM {$this->table} 
-                WHERE id = {$id}";
+                WHERE id = ?");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        $result = $this->conn->query($sql);
-
-        if (!$result) {
-            throw new Exception("Error fetching user: " . $this->conn->error);
-        }
-
-        return $result->fetch_assoc();
+        $user = $result->fetch_assoc();
+        $stmt->close();
+        return $user;
     }
 
     /**
@@ -106,13 +104,13 @@ class AdminUser {
     public function deleteUser($id) {
         $id = intval($id);
 
-        $sql = "DELETE FROM {$this->table} WHERE id = {$id}";
+        $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE id = ?");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $affected = $stmt->affected_rows;
+        $stmt->close();
 
-        if (!$this->conn->query($sql)) {
-            throw new Exception("Error deleting user: " . $this->conn->error);
-        }
-
-        return $this->conn->affected_rows > 0;
+        return $affected > 0;
     }
 
     /**
@@ -120,19 +118,17 @@ class AdminUser {
      * @return array Statistics
      */
     public function getUserStatistics() {
-        $sql = "SELECT 
+        $stmt = $this->conn->prepare("SELECT 
                 COUNT(*) as total_users,
                 COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as new_users_week,
                 COUNT(CASE WHEN Niveau_sportif IS NOT NULL AND Niveau_sportif != '' THEN 1 END) as active_users
-                FROM {$this->table}";
+                FROM {$this->table}");
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        $result = $this->conn->query($sql);
-
-        if (!$result) {
-            throw new Exception("Error fetching statistics: " . $this->conn->error);
-        }
-
-        return $result->fetch_assoc();
+        $stats = $result->fetch_assoc();
+        $stmt->close();
+        return $stats;
     }
 
     /**

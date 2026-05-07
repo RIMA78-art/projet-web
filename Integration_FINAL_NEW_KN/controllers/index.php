@@ -77,6 +77,27 @@ if (strpos($action, 'register') === 0 || strpos($action, 'login') === 0) {
     } elseif (method_exists($controller, $action)) {
         $controller->$action();
     }
+} elseif (strpos($action, 'order') !== false || $action === 'get_popular_items' || $action === 'search_orders') {
+    require_once CONTROLLERS_PATH . 'OrderController.php';
+    $controller = new OrderController();
+
+    if ($action === 'create_order') {
+        $controller->createOrder();
+    } elseif ($action === 'get_orders') {
+        $controller->getAllOrders();
+    } elseif ($action === 'search_orders') {
+        $controller->searchOrders();
+    } elseif ($action === 'get_order_details') {
+        $controller->getOrderDetails();
+    } elseif ($action === 'delete_order') {
+        $controller->deleteOrder();
+    } elseif ($action === 'order_admin_stats') {
+        $controller->getAdminStats();
+    } elseif ($action === 'get_popular_items') {
+        $controller->getPopularItems();
+    } elseif (method_exists($controller, $action)) {
+        $controller->$action();
+    }
 } elseif (strpos($action, 'admin') !== false) {
     require_once CONTROLLERS_PATH . 'AdminUserController.php';
     $controller = new AdminUserController();

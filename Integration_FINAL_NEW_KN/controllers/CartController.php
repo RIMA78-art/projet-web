@@ -135,21 +135,27 @@ class CartController {
     }
 
     /**
-     * Get admin shop statistics and recent purchases
+     * Get admin shop statistics and recent purchases from orders
      * @return void
      */
     public function getAdminStats() {
         header('Content-Type: application/json; charset=utf-8');
 
         try {
-            $stats = $this->cartModel->getGlobalStats();
-            $recent_purchases = $this->cartModel->getAll();
+            require_once __DIR__ . '/../models/Order.php';
+            $orderModel = new Order();
+            
+            // Get order statistics (revenue, count, recent orders)
+            $stats = $orderModel->getStats(8);
+            
+            // Get recent purchases from order items
+            $recentPurchases = $orderModel->getRecentPurchaseItems(8);
 
             echo json_encode([
                 'success' => true,
-                'revenue' => $stats['total_revenue'],
+                'revenue' => $stats['total_profit'],
                 'orders' => $stats['total_orders'],
-                'recent_purchases' => $recent_purchases
+                'recent_purchases' => $recentPurchases
             ]);
             exit;
         } catch (Exception $e) {

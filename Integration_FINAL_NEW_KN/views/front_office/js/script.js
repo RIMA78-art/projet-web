@@ -2,6 +2,8 @@
 console.log('script.js loaded');
 const APP_FOLDER = 'Integration_FINAL_NEW_KN';
 let API_ROOT = '../../controllers/index.php';
+let currentCartTotal = 0;
+const PRODUCT_VISUAL_BY_NAME = {};
 console.log('Cart API root:', API_ROOT);
 
 // PAGES PROTÉGÉES - nécessite authentification
@@ -22,6 +24,30 @@ function getLoggedInUser() {
 function getCurrentUserEmail() {
   const user = getLoggedInUser();
   return user && user.email ? user.email : '';
+}
+
+function buildOrderItemsPayload() {
+  let cart = JSON.parse(localStorage.getItem('nutrinova_cart') || '[]');
+  const grouped = {};
+
+  cart.forEach(item => {
+    const key = `${item.Nom}___${item.Prix}`;
+    if (!grouped[key]) {
+      grouped[key] = {
+        product_name: item.Nom,
+        unit_price: Number(item.Prix),
+        quantity: 0
+      };
+    }
+    grouped[key].quantity += 1;
+  });
+
+  return Object.values(grouped).map(item => ({
+    product_name: item.product_name,
+    unit_price: item.unit_price,
+    quantity: item.quantity,
+    total_price: Number((item.unit_price * item.quantity).toFixed(2))
+  }));
 }
 
 // Fonction de navigation avec vérification d'authentification
@@ -105,14 +131,17 @@ function escapeHtml(value) {
 function loadBoutiqueProducts() {
   const grid = document.querySelector('#page-boutique .shop-grid');
   if (!grid) return;
+  const emptyMessage = document.getElementById('boutique-empty-message');
 
   fetch(`${API_ROOT}?action=get_products`, { cache: 'no-store' })
     .then(r => r.json())
     .then(result => {
-      if (!result || !result.success || !Array.isArray(result.products)) return;
-
-      // Remove previously rendered dynamic catalog products before repainting.
-      grid.querySelectorAll('.dynamic-product-card').forEach(node => node.remove());
+      if (!result || !result.success || !Array.isArray(result.products)) {
+        if (emptyMessage) emptyMessage.textContent = 'Aucun produit disponible.';
+        return;
+      }
+      grid.innerHTML = '';
+      let renderedCount = 0;
 
       result.products.forEach((product, index) => {
         const prix = Number(product.prix || product.Prix || 0);
@@ -125,6 +154,11 @@ function loadBoutiqueProducts() {
         const safeNom = escapeHtml(product.nom);
         const safeDescription = escapeHtml(description);
         const priceText = prix.toFixed(2).replace('.', ',');
+
+        PRODUCT_VISUAL_BY_NAME[String(product.nom).toLowerCase()] = {
+          emoji: categoryMeta.emoji,
+          bg: categoryMeta.bg
+        };
 
         const card = document.createElement('div');
         card.className = 'product-card dynamic-product-card';
@@ -144,10 +178,18 @@ function loadBoutiqueProducts() {
 
         const addBtn = card.querySelector('button');
         addBtn.addEventListener('click', () => addToCart(product.nom, prix));
-        grid.prepend(card);
+        grid.appendChild(card);
+        renderedCount += 1;
       });
+
+      if (renderedCount === 0) {
+        grid.innerHTML = '<p id="boutique-empty-message" style="grid-column:1 / -1; color:var(--gray-500);">Aucun produit disponible.</p>';
+      }
     })
-    .catch(err => console.error('Error loading boutique products:', err));
+    .catch(err => {
+      console.error('Error loading boutique products:', err);
+      if (emptyMessage) emptyMessage.textContent = 'Erreur lors du chargement des produits.';
+    });
 }
 
 // Mettre à jour la navbar en fonction de l'état de connexion
@@ -192,25 +234,31 @@ function loadCart() {
     if (!cartDiv) return;
     if (cart.length > 0) {
       let html = '';
+      let total = 0;
       cart.forEach((item, index) => {
         const productInfo = getProductInfo(item.Nom);
+        const itemPrice = Number(item.Prix) || 0;
+        total += itemPrice;
         html += `
           <div class="product-card">
             <div class="product-img-placeholder" style="background:${productInfo.bg}">${productInfo.emoji}</div>
             <div class="product-body">
               <h3>${item.Nom}</h3>
               <div class="product-footer">
-                <span class="product-price">${item.Prix}€</span>
+                <span class="product-price">${itemPrice.toFixed(2)}€</span>
                 <button class="btn-ghost" onclick="removeFromCart(${index})" style="padding:4px 8px; font-size:12px;">Supprimer</button>
               </div>
             </div>
           </div>
         `;
       });
+      currentCartTotal = total;
       cartDiv.innerHTML = html;
     } else {
+      currentCartTotal = 0;
       cartDiv.innerHTML = '<p>Votre panier est vide.</p>';
     }
+    updateCartSummaryUI();
   };
 
   if (user && user.email) {
@@ -245,6 +293,92 @@ function loadCart() {
       if (cartDiv) cartDiv.innerHTML = '<p>❌ Erreur lors du chargement du panier.</p>';
     }
   }
+}
+
+function updateCartSummaryUI() {
+  const totalEl = document.getElementById('cart-total-value');
+  const confirmBtn = document.getElementById('confirm-order-btn');
+  if (totalEl) {
+    totalEl.textContent = `${currentCartTotal.toFixed(2)}€`;
+  }
+  if (confirmBtn) {
+    confirmBtn.disabled = currentCartTotal <= 0;
+    confirmBtn.style.opacity = currentCartTotal <= 0 ? '0.6' : '1';
+    confirmBtn.style.cursor = currentCartTotal <= 0 ? 'not-allowed' : 'pointer';
+  }
+}
+
+function goToOrderForm() {
+  if (currentCartTotal <= 0) {
+    showToast('❌ Votre panier est vide');
+    return;
+  }
+  const totalField = document.getElementById('order-total');
+  if (totalField) {
+    totalField.value = `${currentCartTotal.toFixed(2)}€`;
+  }
+  showPage('order');
+}
+
+function submitOrder(e) {
+  e.preventDefault();
+
+  const nameEl = document.getElementById('order-name');
+  const addressEl = document.getElementById('order-address');
+  const phoneEl = document.getElementById('order-phone');
+
+  const customerName = (nameEl?.value || '').trim();
+  const address = (addressEl?.value || '').trim();
+  const telephone = (phoneEl?.value || '').trim();
+
+  if (!customerName || !address) {
+    showToast('❌ Nom et adresse requis');
+    return;
+  }
+  if (!/^\d{8}$/.test(telephone)) {
+    showToast('❌ Le numéro de téléphone doit contenir exactement 8 chiffres');
+    return;
+  }
+  if (currentCartTotal <= 0) {
+    showToast('❌ Le total du panier est invalide');
+    return;
+  }
+
+  const user = getLoggedInUser();
+  const payload = new FormData();
+  payload.append('customer_name', customerName);
+  payload.append('address', address);
+  payload.append('telephone', telephone);
+  payload.append('total_price', String(currentCartTotal.toFixed(2)));
+  if (user && user.email) {
+    payload.append('user_email', user.email);
+  }
+
+  const orderItems = buildOrderItemsPayload();
+  if (orderItems.length > 0) {
+    payload.append('items', JSON.stringify(orderItems));
+  }
+
+  fetch(`${API_ROOT}?action=create_order`, {
+    method: 'POST',
+    body: payload
+  })
+    .then(r => r.json())
+    .then(result => {
+      if (result && result.success) {
+        showToast('✅ Ordre confirmé avec succès');
+        const form = document.getElementById('order-form');
+        if (form) form.reset();
+        localStorage.removeItem('nutrinova_cart');
+        showPage('panier');
+      } else {
+        showToast('❌ ' + ((result && result.error) || 'Erreur lors de la confirmation'));
+      }
+    })
+    .catch(err => {
+      console.error('Order confirmation error:', err);
+      showToast('❌ Erreur réseau');
+    });
 }
 
 // REMOVE FROM CART
@@ -306,7 +440,21 @@ function getProductInfo(nom) {
     'Magnésium Bisglycinate': { emoji: '🌿', bg: 'linear-gradient(135deg,#F1F8E9,#C5E1A5)' },
     'Carnet de suivi Sport': { emoji: '📔', bg: 'linear-gradient(135deg,#E8EAF6,#9FA8DA)' }
   };
-  return products[nom] || { emoji: '❓', bg: 'linear-gradient(135deg,#f0f0f0,#e0e0e0)' };
+  const key = String(nom || '').toLowerCase();
+  if (PRODUCT_VISUAL_BY_NAME[key]) {
+    return PRODUCT_VISUAL_BY_NAME[key];
+  }
+  return products[nom] || getProductVisualFromName(nom);
+}
+
+function getProductVisualFromName(nom) {
+  const value = String(nom || '');
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash + value.charCodeAt(i)) % 997;
+  }
+  const visual = getProductVisual(hash);
+  return { emoji: visual.emoji, bg: visual.bg };
 }
 
 // ADD TO CART
@@ -917,4 +1065,10 @@ document.addEventListener('DOMContentLoaded', () => {
   updateNavbar(); // Mettre à jour la navbar au chargement
   initPostModal(); // Initialiser le modal des posts
   loadBoutiqueProducts(); // Ensure boutique includes DB products on first load
+  const phoneInput = document.getElementById('order-phone');
+  if (phoneInput) {
+    phoneInput.addEventListener('input', () => {
+      phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 8);
+    });
+  }
 });

@@ -683,102 +683,7 @@
         <button class="btn-primary" onclick="showPage('panier')" style="margin-left:auto;">🛒 Panier</button>
       </div>
       <div class="shop-grid">
-        <div class="product-card" data-cat="bio">
-          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9)">🥗</div>
-          <div class="product-body">
-            <span class="product-tag">Bio &amp; Local</span>
-            <h3>Kit Salad Detox</h3>
-            <p>Mélange de légumineuses et superfoods certifiés biologiques.</p>
-            <div class="product-footer">
-              <span class="product-price">24,90€</span>
-              <button class="btn-primary" onclick="addToCart('Kit Salad Detox', 24.90)">Ajouter</button>
-            </div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="complement">
-          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB)">💊</div>
-          <div class="product-body">
-            <span class="product-tag">Complément</span>
-            <h3>Omega-3 Végétal</h3>
-            <p>Acides gras essentiels issus d'algues marines durables.</p>
-            <div class="product-footer">
-              <span class="product-price">32,00€</span>
-              <button class="btn-primary" onclick="addToCart('Omega-3 Végétal', 32.00)">Ajouter</button>
-            </div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="complement">
-          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2)">🥤</div>
-          <div class="product-body">
-            <span class="product-tag">Performance</span>
-            <h3>Protéine de Pois Bio</h3>
-            <p>80% protéines pures, sans lactose ni additifs artificiels.</p>
-            <div class="product-footer">
-              <span class="product-price">28,50€</span>
-              <button class="btn-primary" onclick="addToCart('Protéine de Pois Bio', 28.50)">Ajouter</button>
-            </div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="accessoire">
-          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#F3E5F5,#E1BEE7)">🎽</div>
-          <div class="product-body">
-            <span class="product-tag">Accessoire</span>
-            <h3>Gourde Inox 750ml</h3>
-            <p>Double paroi isotherme, matériaux recyclés certifiés.</p>
-            <div class="product-footer">
-              <span class="product-price">18,00€</span>
-              <button class="btn-primary" onclick="addToCart('Gourde Inox 750ml', 18.00)">Ajouter</button>
-            </div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="bio">
-          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#E0F7FA,#80DEEA)">🫐</div>
-          <div class="product-body">
-            <span class="product-tag">Bio &amp; Local</span>
-            <h3>Mix Superfoods</h3>
-            <p>Açaï, spiruline, baobab et moringa en un seul blend puissant.</p>
-            <div class="product-footer">
-              <span class="product-price">36,00€</span>
-              <button class="btn-primary" onclick="addToCart('Mix Superfoods', 36.00)">Ajouter</button>
-            </div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="sport">
-          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#FCE4EC,#F48FB1)">🏃</div>
-          <div class="product-body">
-            <span class="product-tag">Sport</span>
-            <h3>Bandes Élastiques Pro</h3>
-            <p>Set de 5 résistances pour muscu maison, matériaux naturels.</p>
-            <div class="product-footer">
-              <span class="product-price">22,00€</span>
-              <button class="btn-primary" onclick="addToCart('Bandes Élastiques Pro', 22.00)">Ajouter</button>
-            </div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="complement">
-          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#F1F8E9,#C5E1A5)">🌿</div>
-          <div class="product-body">
-            <span class="product-tag">Complément</span>
-            <h3>Magnésium Bisglycinate</h3>
-            <p>Forme hautement biodisponible pour récupération musculaire.</p>
-            <div class="product-footer">
-              <span class="product-price">19,90€</span>
-              <button class="btn-primary" onclick="addToCart('Magnésium Bisglycinate', 19.90)">Ajouter</button>
-            </div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="sport">
-          <div class="product-img-placeholder" style="background:linear-gradient(135deg,#E8EAF6,#9FA8DA)">📔</div>
-          <div class="product-body">
-            <span class="product-tag">Sport</span>
-            <h3>Carnet de suivi Sport</h3>
-            <p>Journal d'entraînement en papier recyclé pour suivre vos progrès.</p>
-            <div class="product-footer">
-              <span class="product-price">14,90€</span>
-              <button class="btn-primary" onclick="addToCart('Carnet de suivi Sport', 14.90)">Ajouter</button>
-            </div>
-          </div>
-        </div>
+        <p id="boutique-empty-message" style="grid-column:1 / -1; color:var(--gray-500);">Chargement des produits...</p>
       </div>
     </div>
   </section>
@@ -822,6 +727,49 @@
       <div id="cart-items">
         <p>Chargement du panier...</p>
       </div>
+      <div id="cart-summary" style="margin-top:20px; padding:16px; background:var(--off-white); border-radius:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <strong>Total</strong>
+          <strong id="cart-total-value">0.00€</strong>
+        </div>
+        <button id="confirm-order-btn" class="btn-primary" style="width:100%" onclick="goToOrderForm()" disabled>Confirmer Ordre</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============================
+     PAGE : CONFIRMATION COMMANDE
+     ============================ -->
+<div class="page" id="page-order">
+  <div class="page-hero">
+    <h1>Confirmer Ordre</h1>
+    <p>Veuillez renseigner vos informations avant confirmation.</p>
+  </div>
+  <section>
+    <div class="container">
+      <form id="order-form" onsubmit="submitOrder(event)" style="max-width:700px; margin:0 auto;">
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" id="order-name" class="form-control" required placeholder="Votre nom complet">
+        </div>
+        <div class="form-group">
+          <label>Adresse</label>
+          <textarea id="order-address" class="form-control" required placeholder="Votre adresse complète"></textarea>
+        </div>
+        <div class="form-group">
+          <label>No Téléphone (8 chiffres)</label>
+          <input type="text" id="order-phone" class="form-control" required maxlength="8" pattern="\d{8}" inputmode="numeric" placeholder="12345678">
+        </div>
+        <div class="form-group">
+          <label>Total panier</label>
+          <input type="text" id="order-total" class="form-control" readonly>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button type="submit" class="btn-primary btn-lg">Confirm</button>
+          <button type="button" class="btn-ghost btn-lg" onclick="showPage('panier')">Retour au panier</button>
+        </div>
+      </form>
     </div>
   </section>
 </div>
@@ -1170,6 +1118,6 @@
   </div>
 </div>
 
-<script src="js/script.js?v=3"></script>
+<script src="js/script.js?v=4"></script>
 </body>
 </html>

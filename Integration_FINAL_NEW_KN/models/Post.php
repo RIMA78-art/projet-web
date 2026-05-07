@@ -37,9 +37,9 @@ class Post {
      * @return array Response
      */
     public function create($data) {
-        $nom_auteur = $this->db->escapeString(trim($data['nom_auteur']));
-        $titre_post = $this->db->escapeString(trim($data['titre_post']));
-        $contenu_post = $this->db->escapeString(trim($data['contenu_post']));
+        $nom_auteur = trim($data['nom_auteur']);
+        $titre_post = trim($data['titre_post']);
+        $contenu_post = trim($data['contenu_post']);
 
         // Validate required fields
         if (empty($nom_auteur) || empty($titre_post) || empty($contenu_post)) {
@@ -67,20 +67,24 @@ class Post {
             ];
         }
 
-        // Insert post
-        $insert_sql = "INSERT INTO {$this->table} (nom_auteur, titre_post, contenu_post) 
-                       VALUES ('" . $nom_auteur . "', '" . $titre_post . "', '" . $contenu_post . "')";
+        // Insert post using prepared statement
+        $stmt = $this->conn->prepare("INSERT INTO {$this->table} (nom_auteur, titre_post, contenu_post) VALUES (?, ?, ?)");
+        $stmt->bind_param('sss', $nom_auteur, $titre_post, $contenu_post);
 
-        if ($this->conn->query($insert_sql)) {
+        if ($stmt->execute()) {
+            $id = $stmt->insert_id;
+            $stmt->close();
             return [
                 'success' => true,
                 'message' => 'Post created successfully',
-                'id' => $this->conn->insert_id
+                'id' => $id
             ];
         } else {
+            $error = $stmt->error;
+            $stmt->close();
             return [
                 'success' => false,
-                'error' => 'Database error: ' . $this->conn->error,
+                'error' => 'Database error: ' . $error,
                 'code' => 'DB_ERROR'
             ];
         }
@@ -93,15 +97,16 @@ class Post {
      */
     public function getAll($limit = 50) {
         $limit = intval($limit);
-        $sql = "SELECT id, nom_auteur, titre_post, contenu_post, created_at FROM {$this->table} ORDER BY created_at DESC LIMIT " . $limit;
-        $result = $this->conn->query($sql);
+        $stmt = $this->conn->prepare("SELECT id, nom_auteur, titre_post, contenu_post, created_at FROM {$this->table} ORDER BY created_at DESC LIMIT ?");
+        $stmt->bind_param('i', $limit);
+        $stmt->execute();
+        $result = $stmt->get_result();
         
         $posts = [];
-        if ($result && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $posts[] = $row;
-            }
+        while ($row = $result->fetch_assoc()) {
+            $posts[] = $row;
         }
+        $stmt->close();
         return $posts;
     }
 
@@ -112,13 +117,14 @@ class Post {
      */
     public function getById($id) {
         $id = intval($id);
-        $sql = "SELECT * FROM {$this->table} WHERE id = " . $id;
-        $result = $this->conn->query($sql);
+        $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE id = ?");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
         
-        if ($result && $result->num_rows > 0) {
-            return $result->fetch_assoc();
-        }
-        return null;
+        $post = $result->fetch_assoc();
+        $stmt->close();
+        return $post;
     }
 
     /**
@@ -129,8 +135,8 @@ class Post {
      */
     public function update($id, $data) {
         $id = intval($id);
-        $titre_post = $this->db->escapeString(trim($data['titre_post']));
-        $contenu_post = $this->db->escapeString(trim($data['contenu_post']));
+        $titre_post = trim($data['titre_post']);
+        $contenu_post = trim($data['contenu_post']);
 
         // Validate required fields
         if (empty($titre_post) || empty($contenu_post)) {
@@ -158,18 +164,22 @@ class Post {
             ];
         }
 
-        // Update post
-        $update_sql = "UPDATE {$this->table} SET titre_post = '" . $titre_post . "', contenu_post = '" . $contenu_post . "' WHERE id = " . $id;
+        // Update post using prepared statement
+        $stmt = $this->conn->prepare("UPDATE {$this->table} SET titre_post = ?, contenu_post = ? WHERE id = ?");
+        $stmt->bind_param('ssi', $titre_post, $contenu_post, $id);
 
-        if ($this->conn->query($update_sql)) {
+        if ($stmt->execute()) {
+            $stmt->close();
             return [
                 'success' => true,
                 'message' => 'Post updated successfully'
             ];
         } else {
+            $error = $stmt->error;
+            $stmt->close();
             return [
                 'success' => false,
-                'error' => 'Database error: ' . $this->conn->error,
+                'error' => 'Database error: ' . $error,
                 'code' => 'DB_ERROR'
             ];
         }
@@ -191,11 +201,14 @@ class Post {
             ];
         }
 
-        // Delete post
-        $delete_sql = "DELETE FROM {$this->table} WHERE id = " . $id;
+        // Delete post using prepared statement
+        $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE id = ?");
+        $stmt->bind_param('i', $id);
 
-        if ($this->conn->query($delete_sql)) {
-            if ($this->conn->affected_rows > 0) {
+        if ($stmt->execute()) {
+            $affected = $stmt->affected_rows;
+            $stmt->close();
+            if ($affected > 0) {
                 return [
                     'success' => true,
                     'message' => 'Post deleted successfully'
@@ -208,9 +221,11 @@ class Post {
                 ];
             }
         } else {
+            $error = $stmt->error;
+            $stmt->close();
             return [
                 'success' => false,
-                'error' => 'Database error: ' . $this->conn->error,
+                'error' => 'Database error: ' . $error,
                 'code' => 'DB_ERROR'
             ];
         }

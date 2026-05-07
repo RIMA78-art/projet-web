@@ -30,15 +30,15 @@ class Product {
     }
 
     public function addProduct($data) {
-        $nom = $this->db->escapeString(trim($data['nom'] ?? ''));
+        $nom = trim($data['nom'] ?? '');
         $prix = floatval($data['prix'] ?? 0);
-        $description = $this->db->escapeString(trim($data['description'] ?? ''));
+        $description = trim($data['description'] ?? '');
         $rawCategorie = trim($data['categorie'] ?? 'complement');
         $allowedCategories = ['bio', 'complement', 'sport', 'accessoire'];
         if (!in_array($rawCategorie, $allowedCategories, true)) {
             $rawCategorie = 'complement';
         }
-        $categorie = $this->db->escapeString($rawCategorie);
+        $categorie = $rawCategorie;
 
         if (empty($nom) || $prix <= 0) {
             return [
@@ -46,34 +46,62 @@ class Product {
                 'error' => 'Product name and valid price are required'
             ];
         }
-
-        $insertSql = "INSERT INTO {$this->table} (nom, prix, description, categorie) VALUES ('{$nom}', {$prix}, '{$description}', '{$categorie}')";
-        if ($this->conn->query($insertSql)) {
+        if ($prix > 200) {
             return [
-                'success' => true,
-                'id' => $this->conn->insert_id,
-                'message' => 'Product added successfully'
+                'success' => false,
+                'error' => 'Price cannot exceed 200'
             ];
         }
 
-        return [
-            'success' => false,
-            'error' => 'Database error: ' . $this->conn->error
-        ];
+        if ($this->productNameExists($nom)) {
+            return [
+                'success' => false,
+                'error' => 'A product with this name already exists'
+            ];
+        }
+
+        $stmt = $this->conn->prepare("INSERT INTO {$this->table} (nom, prix, description, categorie) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param('sdss', $nom, $prix, $description, $categorie);
+        if ($stmt->execute()) {
+            $id = $stmt->insert_id;
+            $stmt->close();
+            return [
+                'success' => true,
+                'id' => $id,
+                'message' => 'Product added successfully'
+            ];
+        } else {
+            $error = $stmt->error;
+            $stmt->close();
+            return [
+                'success' => false,
+                'error' => 'Database error: ' . $error
+            ];
+        }
     }
 
     public function getAllProducts() {
-        $sql = "SELECT id, nom, prix, description, categorie, created_at FROM {$this->table} ORDER BY created_at DESC";
-        $result = $this->conn->query($sql);
+        $stmt = $this->conn->prepare("SELECT id, nom, prix, description, categorie, created_at FROM {$this->table} ORDER BY created_at DESC");
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         $items = [];
-        if ($result && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $items[] = $row;
-            }
+        while ($row = $result->fetch_assoc()) {
+            $items[] = $row;
         }
+        $stmt->close();
 
         return $items;
+    }
+
+    private function productNameExists($nom) {
+        $stmt = $this->conn->prepare("SELECT id FROM {$this->table} WHERE LOWER(nom) = LOWER(?) LIMIT 1");
+        $stmt->bind_param('s', $nom);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $exists = $result->num_rows > 0;
+        $stmt->close();
+        return $exists;
     }
 
     public function __destruct() {
