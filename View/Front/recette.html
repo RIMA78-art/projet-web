@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Inter:wght@100..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#6f7a6b",
+                    "surface": "#f8faf8",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#becab9",
+                    "on-surface-variant": "#3f4a3c",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#27308a",
+                    "secondary-container": "#959efd",
+                    "surface-container": "#eceeec",
+                    "surface-dim": "#d8dad9",
+                    "surface-container-low": "#f2f4f2",
+                    "background": "#f8faf8",
+                    "surface-container-highest": "#e1e3e1",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#006e1c",
+                    "surface-container-high": "#e6e9e7",
+                    "on-background": "#191c1b",
+                    "on-secondary-fixed-variant": "#343d96",
+                    "on-secondary-fixed": "#000767",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffaaf7",
+                    "tertiary": "#a700ac",
+                    "on-primary-container": "#003c0b",
+                    "tertiary-container": "#f656f6",
+                    "inverse-on-surface": "#eff1ef",
+                    "surface-variant": "#e1e3e1",
+                    "on-tertiary-container": "#5f0062",
+                    "on-primary-fixed": "#002204",
+                    "secondary-fixed-dim": "#bdc2ff",
+                    "primary-fixed-dim": "#78dc77",
+                    "secondary-fixed": "#e0e0ff",
+                    "on-primary-fixed-variant": "#005313",
+                    "primary": "#006e1c",
+                    "secondary": "#4c56af",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#94f990",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#4caf50",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#380039",
+                    "inverse-surface": "#2e3130",
+                    "on-tertiary-fixed-variant": "#800084",
+                    "inverse-primary": "#78dc77",
+                    "on-surface": "#191c1b",
+                    "tertiary-fixed": "#ffd7f7",
+                    "surface-bright": "#f8faf8",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Manrope', sans-serif; }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-sm">
+<nav class="flex justify-between items-center px-8 h-16 w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black tracking-tighter text-green-700">NutriAtrium</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-green-700 border-b-2 border-green-700 pb-1 font-['Manrope'] font-bold tracking-tight transition-colors duration-200 ease-in-out" href="#">Catalog</a>
+<a class="text-zinc-500 hover:text-green-600 font-['Manrope'] font-bold tracking-tight transition-colors duration-200 ease-in-out" href="#">My Meal Plan</a>
+<a class="text-zinc-500 hover:text-green-600 font-['Manrope'] font-bold tracking-tight transition-colors duration-200 ease-in-out" href="#">Community</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<input class="bg-surface-container-low border-none rounded-lg px-4 py-1.5 text-sm w-64 focus:ring-2 focus:ring-primary/40 outline-none" placeholder="Search recipes..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 text-lg">search</span>
+</div>
+<button class="p-2 text-zinc-500 hover:text-green-600 transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-zinc-200 overflow-hidden">
+<img alt="User Profile" data-alt="professional headshot of a smiling person with soft natural lighting and a clean minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4FUQvedgD-drpkwOlCbZfxRSjvNYAG9IBByCtcq5dcKKkrzXm5uZtfRcYqIkgG_9wcVG6FxQ7UGnAPLC5UFJTQeb6h2Vj3ScxlEk_crV98pfVR6ddetYdgUebjBFI6PfQbkBVcphjyLMFmwGPTr2d372L2lAsRtOKkGoTwxQIpymimoOsaSih46pc2AV0dCveyiF4CF1pM9oK3cJdzU-Wu_CcNaD2XOmPqP49YjUh0bV_M-Hda8nNrW5jOYBCod_nblAfj4fdVqA"/>
+</div>
+</div>
+</nav>
+<div class="bg-zinc-100 h-[1px] w-full"></div>
+</header>
+<main class="pt-24 pb-20 px-8 max-w-screen-2xl mx-auto">
+<!-- Editorial Hero Section -->
+<section class="mb-16">
+<div class="flex flex-col md:flex-row gap-12 items-end">
+<div class="flex-1">
+<h1 class="text-6xl font-extrabold tracking-tight text-on-surface mb-6 leading-none">
+                        The Seasonal <br/><span class="text-primary italic">Kitchen</span>
+</h1>
+<p class="text-lg text-on-surface-variant max-w-xl body-sm">
+                        Curated nutrition for the modern palate. Explore our library of scientifically-backed, chef-crafted recipes designed for longevity and vibrancy.
+                    </p>
+</div>
+<div class="flex gap-4 pb-2">
+<div class="flex flex-col items-center p-4 bg-primary-container/20 rounded-xl min-w-[120px]">
+<span class="text-2xl font-bold text-primary">1.2k</span>
+<span class="text-xs uppercase tracking-widest text-on-surface-variant font-semibold">Recipes</span>
+</div>
+<div class="flex flex-col items-center p-4 bg-tertiary-container/10 rounded-xl min-w-[120px]">
+<span class="text-2xl font-bold text-tertiary">45</span>
+<span class="text-xs uppercase tracking-widest text-on-surface-variant font-semibold">New Today</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Search & Filter Controls -->
+<section class="mb-12 sticky top-20 z-40 bg-surface/80 backdrop-blur-md py-4">
+<div class="flex flex-wrap items-center justify-between gap-6">
+<div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+<button class="px-6 py-2 bg-primary text-on-primary rounded-md font-medium text-sm transition-all hover:translate-y-[-1px]">All Recipes</button>
+<button class="px-6 py-2 bg-secondary-fixed text-on-secondary-fixed rounded-md font-medium text-sm hover:bg-secondary-fixed-dim transition-all">Vegan</button>
+<button class="px-6 py-2 bg-secondary-fixed text-on-secondary-fixed rounded-md font-medium text-sm hover:bg-secondary-fixed-dim transition-all">Gluten-Free</button>
+<button class="px-6 py-2 bg-secondary-fixed text-on-secondary-fixed rounded-md font-medium text-sm hover:bg-secondary-fixed-dim transition-all">Keto</button>
+<button class="px-6 py-2 bg-secondary-fixed text-on-secondary-fixed rounded-md font-medium text-sm hover:bg-secondary-fixed-dim transition-all">High Protein</button>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-low text-on-surface-variant rounded-md text-sm font-medium">
+<span class="material-symbols-outlined text-lg">tune</span>
+                        Filters
+                    </button>
+<div class="h-6 w-[1px] bg-outline-variant/30"></div>
+<span class="text-sm text-on-surface-variant font-medium">Sort by: <span class="text-primary cursor-pointer">Most Recent</span></span>
+</div>
+</div>
+</section>
+<!-- Recipe Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Featured Large Card -->
+<article class="md:col-span-8 group cursor-pointer">
+<div class="relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm h-full flex flex-col">
+<div class="relative aspect-[16/9] overflow-hidden">
+<img alt="Vegan Buddha Bowl" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="overhead shot of a vibrant vegan buddha bowl with roasted sweet potatoes, quinoa, kale, and avocado drizzled with tahini sauce" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA81xc6R-Us2Cjj6lpsw6ES08wVaJzzAAWFydio6EvgMvLMAdmwkqYi4nCTqlYUgJCdDrjZAXIWS-DC6wBRV6zqe3ImYFhruDlohHDnPEqKalgmuBs7Ig4kYjiOygO8uBUOwoOe88ba34ZdIUSIFn-xovSSPAhn-Itw8gLhzxX__uyoMY6TlNz72RpDqkDgMSek358XWEJnljSOY768Y1jq1SAbvRbuJt0lLC20vFsuQyqR2NRwJoup5aDuLmhvRSitELSBV6v9yQM"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-bold text-primary uppercase tracking-wider">Editor's Choice</span>
+<span class="px-3 py-1 bg-green-700 text-white rounded-full text-xs font-bold uppercase tracking-wider">Vegan</span>
+</div>
+</div>
+<div class="p-8 flex flex-col justify-between flex-grow">
+<div>
+<div class="flex justify-between items-start mb-4">
+<h2 class="text-4xl font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors">Roasted Harvest Quinoa &amp; Tahini Atrium Bowl</h2>
+<span class="material-symbols-outlined text-zinc-300 group-hover:text-primary" data-icon="bookmark">bookmark</span>
+</div>
+<p class="text-on-surface-variant mb-8 max-w-2xl leading-relaxed">A nutrient-dense foundation of tri-color quinoa topped with maple-glazed root vegetables, massage kale, and our signature lemon-tahini dressing.</p>
+</div>
+<div class="flex items-center gap-8 text-sm font-semibold text-zinc-500 border-t border-zinc-100 pt-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
+                                25 mins
+                            </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="local_fire_department">local_fire_department</span>
+                                420 kcal
+                            </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="restaurant">restaurant</span>
+                                Easy
+                            </div>
+</div>
+</div>
+</div>
+</article>
+<!-- Secondary Vertical Card -->
+<article class="md:col-span-4 group cursor-pointer">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm h-full flex flex-col">
+<div class="relative aspect-square overflow-hidden rounded-t-xl">
+<img alt="Citrus Salmon Salad" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="close up of a pan-seared salmon fillet over a bed of arugula and sliced oranges with fennel shavings and a citrus vinaigrette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM4eFFb8DE8gri0QTUgvmtS8DNXSWNAEksBlCahTjPy-e7qKHjEoaSRCvmIo8i1tu0iD7DBucLL2mBXJry4rC_APHPjr8XbTK7bGBINMIwnDjQKk2FvZQ6h3UBsi-OAmbMvnuPuQjvTMrOFaLjhZ9AZ2Gl27M0EhaV_NX0xOK3bRHUIdnH6dPaQxBI8puanYCCrooF1ES2fUXX8mrIZBdd_5x3npKU12BajGe9b3ORQknetWtTMx9P61SZmWMglw0jTxXltW6NiFw"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-bold text-secondary uppercase tracking-wider">High Protein</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="text-2xl font-bold tracking-tight mb-3 group-hover:text-primary transition-colors">Wild-Caught Citrus Glazed Salmon</h3>
+<p class="text-sm text-on-surface-variant line-clamp-3 mb-6">Crispy skin salmon paired with a refreshing fennel and citrus salad. Rich in Omega-3s and light on the palate.</p>
+<div class="flex justify-between items-center text-xs font-bold text-zinc-400 uppercase tracking-widest pt-4 border-t border-zinc-100">
+<span>15 MINS</span>
+<span>380 KCAL</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Regular Grid Cards -->
+<article class="md:col-span-4 group cursor-pointer">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden rounded-t-xl">
+<img alt="Green Smoothie Bowl" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="bright green smoothie bowl topped with sliced kiwi, chia seeds, coconut flakes and fresh mint leaves on a white marble table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoblWpIOBLj_rCKk-kOMAadKMWslAdn7bN1COr26rYE0rcQxkxJnHi4Pl41PFhkETrXQa44KgoPHGuimxqNivC5-WfH5YnKsnwdGVhn__MzRqEXJi9R0Pqh6nX5G7uzuN6gfO60oKwHz0VX_xkNfsz64HnNR8nZfuQBaZFAil4VIPe94BvuWw-WTNPskJOL20tyCn1GWOVIZxCrQvO5iQny2E_lKCeCFkuQml9XpRutPUPpSxFrb8GfvrYomrKhBTd0igF6VF5ioA"/>
+</div>
+<div class="p-6">
+<h3 class="text-xl font-bold tracking-tight mb-2">Alkaline Morning Detox Bowl</h3>
+<div class="flex gap-4 text-xs font-medium text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">schedule</span> 10m</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">local_fire_department</span> 290kcal</span>
+</div>
+</div>
+</div>
+</article>
+<article class="md:col-span-4 group cursor-pointer">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden rounded-t-xl">
+<img alt="Mediterranean Toast" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="artisanal whole grain toast topped with smashed avocado, cherry tomatoes, and microgreens with cracked black pepper" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkteUoz-dj2hE4pDDzLa7ILWuOHLqBPesTAzPJDwQKvZhg7mxAn5EsYA0P886F8trnMf9O0vSwjSw3tOF3Dk9-ivXFbsxOMvnFbNcAjgk-ifkkuHWKrFUWGvtvps8SG4x-tT_DCmaRCxzzrmzkbNY3ZEKCOcEVCZS_I8-qSl5IosGK1mWGLTFmYh3N5as1666TJOoU1NVqKO6YeboVqCEK3OoJsP3Gy2igyjAgASp22Hyym0rDB_wd_rgRMyVjnyvT6oqduXTRbDU"/>
+</div>
+<div class="p-6">
+<h3 class="text-xl font-bold tracking-tight mb-2">Heirloom Tomato &amp; Smashed Avo</h3>
+<div class="flex gap-4 text-xs font-medium text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">schedule</span> 5m</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">local_fire_department</span> 310kcal</span>
+</div>
+</div>
+</div>
+</article>
+<article class="md:col-span-4 group cursor-pointer">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden rounded-t-xl">
+<img alt="Roasted Chicken Salad" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="colorful garden salad with sliced grilled chicken breast, pomegranate seeds, walnuts, and a balsamic reduction drizzle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcSkvJmsEmqhsfIXktn9HhPmIiD3egHseVrqHEDm4Qct2gwmc1xroV9WiZvhHfOEuuy8OY8gSzvqXZvTlXW5GfjxIrQhjbQ1U1yiBK3_RPbNSTKW4NozqhcuFzoJTxMNgIu-GRAXjcsBm8vntRi9MB-ScGmNw8IWBV9gIjVllQzvwmhkmS2uZfaf--KikgkIR9aQZGvzvVO-FhcRFOnLNSN7np6pjVihkzEy9QefVIbrNu0kQVVmpkXlwpNf1VqFRyedh6aPLuTis"/>
+</div>
+<div class="p-6">
+<h3 class="text-xl font-bold tracking-tight mb-2">Walnut &amp; Pomegranate Chicken</h3>
+<div class="flex gap-4 text-xs font-medium text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">schedule</span> 35m</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">local_fire_department</span> 540kcal</span>
+</div>
+</div>
+</div>
+</article>
+</section>
+<!-- Community Callout -->
+<section class="mt-20 p-12 rounded-2xl bg-zinc-900 text-white relative overflow-hidden">
+<div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="max-w-xl">
+<h2 class="text-4xl font-bold mb-4">Join our Ingredient Library</h2>
+<p class="text-zinc-400 body-sm">Get exclusive access to our expert nutrition analytics and seasonal recipe manager. Elevate your wellness journey today.</p>
+</div>
+<button class="px-8 py-4 bg-primary rounded-md font-bold text-white transition-transform hover:scale-105 whitespace-nowrap">Explore Membership</button>
+</div>
+<div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/20 to-transparent"></div>
+</section>
+</main>
+<!-- Footer Information -->
+<footer class="bg-surface-container-low pt-16 pb-8 px-8 border-t border-zinc-200">
+<div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between gap-12 mb-16">
+<div class="max-w-xs">
+<span class="text-2xl font-black tracking-tighter text-green-700 mb-6 block">NutriAtrium</span>
+<p class="text-sm text-zinc-500">The intersection of culinary art and nutritional science. Curating a healthier future, one plate at a time.</p>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-12">
+<div>
+<h4 class="font-bold text-sm mb-4 uppercase tracking-widest text-zinc-400">Library</h4>
+<ul class="space-y-2 text-sm font-medium">
+<li><a class="hover:text-primary transition-colors" href="#">Latest Recipes</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Seasonal Guides</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Ingredient Wiki</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-sm mb-4 uppercase tracking-widest text-zinc-400">Company</h4>
+<ul class="space-y-2 text-sm font-medium">
+<li><a class="hover:text-primary transition-colors" href="#">Our Mission</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Nutritionists</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contact</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-sm mb-4 uppercase tracking-widest text-zinc-400">Legal</h4>
+<ul class="space-y-2 text-sm font-medium">
+<li><a class="hover:text-primary transition-colors" href="#">Privacy</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Terms</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Dietary Disclaimer</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto pt-8 border-t border-zinc-200 flex justify-between items-center text-xs font-bold text-zinc-400 uppercase tracking-widest">
+<span>© 2024 NutriAtrium Editorial</span>
+<div class="flex gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary">language</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary">share</span>
+</div>
+</div>
+</footer>
+<!-- Mobile Bottom Navigation Shell -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/70 backdrop-blur-xl border-t border-zinc-100 flex justify-around items-center h-16 z-50">
+<button class="flex flex-col items-center gap-1 text-green-700">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Catalog</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-zinc-400">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Plan</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-zinc-400">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Social</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-zinc-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Profile</span>
+</button>
+</nav>
+</body></html>
