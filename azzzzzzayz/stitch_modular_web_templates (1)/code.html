@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion Nutrition - Back Office</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-900">
+  <div class="min-h-screen lg:grid lg:grid-cols-[260px_1fr]">
+    <aside class="bg-slate-900 text-slate-100 p-5">
+      <h1 class="text-xl font-bold mb-8">Back Nutrition</h1>
+      <nav class="space-y-2 text-sm">
+        <a href="#" class="block px-3 py-2 rounded-lg bg-emerald-600">Dashboard</a>
+        <a href="#" class="block px-3 py-2 rounded-lg hover:bg-slate-800">Programmes</a>
+        <a href="#" class="block px-3 py-2 rounded-lg hover:bg-slate-800">Coachs</a>
+        <a href="#" class="block px-3 py-2 rounded-lg hover:bg-slate-800">Evaluations</a>
+      </nav>
+    </aside>
+
+    <main class="p-6">
+      <header class="bg-white rounded-xl shadow-sm p-5 mb-6">
+        <h2 class="text-2xl font-semibold">View back stitch_modular_web_templates (1)</h2>
+        <p class="text-slate-600 mt-1">Version alignee au projet Gestion Nutrition avec suivi avance.</p>
+      </header>
+
+      <section class="grid lg:grid-cols-3 gap-6 mb-6">
+        <article class="bg-white rounded-xl shadow-sm p-5">
+          <p class="text-sm text-slate-500">Programmes actifs</p>
+          <p class="text-3xl font-bold mt-2">18</p>
+        </article>
+        <article class="bg-white rounded-xl shadow-sm p-5">
+          <p class="text-sm text-slate-500">Coachs inscrits</p>
+          <p class="text-3xl font-bold mt-2">07</p>
+        </article>
+        <article class="bg-white rounded-xl shadow-sm p-5">
+          <p class="text-sm text-slate-500">Taux completion</p>
+          <p class="text-3xl font-bold mt-2 text-emerald-700">92%</p>
+        </article>
+      </section>
+
+      <section class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex flex-wrap gap-3 items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold">Tableau Programmes</h3>
+          <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">Synchronise Front/Back</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="text-left text-slate-500">
+              <tr>
+                <th class="py-2 pr-4">Nom</th>
+                <th class="py-2 pr-4">Duree (semaines)</th>
+                <th class="py-2 pr-4">Jours/semaine</th>
+                <th class="py-2 pr-4">Difficulte</th>
+              </tr>
+            </thead>
+            <tbody class="text-slate-800">
+              <tr>
+                <td class="py-2 pr-4">Programme Keto Start</td>
+                <td class="py-2 pr-4">6</td>
+                <td class="py-2 pr-4">5</td>
+                <td class="py-2 pr-4">debutant</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">Lean Performance</td>
+                <td class="py-2 pr-4">10</td>
+                <td class="py-2 pr-4">6</td>
+                <td class="py-2 pr-4">intermediaire</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+﻿:root {
+  --primary: #16a34a;
+  --secondary: #0f172a;
+  --accent: #22d3ee;
+  --light: #f8fafc;
+}
+
+html[data-theme='dark'] {
+  --light: #0b1220;
+}
+
+body {
+  background: linear-gradient(180deg, var(--light), #e8f3ff);
+  color: #0f172a;
+}
+
+html[data-theme='dark'] body {
+  background: linear-gradient(180deg, #0b1220, #111827);
+  color: #e5e7eb;
+}
+
+.nn-navbar {
+  background: linear-gradient(90deg, var(--secondary), #1f2937);
+}
+
+.nn-logo { height: 34px; width: auto; }
+.nn-icon { width: 52px; height: 52px; }
+
+.card { border: 0; box-shadow: 0 8px 20px rgba(2, 6, 23, .06); }
+.stat-card { transition: transform .2s ease, box-shadow .2s ease; }
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,.12); }
+
+.btn-success { background-color: var(--primary); border-color: var(--primary); }
+.btn-primary { background-color: #2563eb; border-color: #2563eb; }
+.btn-danger { background-color: #dc2626; border-color: #dc2626; }
+.btn-dark { background-color: var(--secondary); border-color: var(--secondary); }
+
+.nn-skeleton {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion Nutrition - Front Office</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <header class="bg-emerald-700 text-white">
+    <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+      <h1 class="text-2xl font-bold">Gestion Nutrition</h1>
+      <nav class="space-x-6 text-sm font-medium">
+        <a href="#" class="hover:underline">Accueil</a>
+        <a href="#" class="hover:underline">Programmes</a>
+        <a href="#" class="hover:underline">Coachs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto p-6">
+    <section class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="text-xl font-semibold mb-2">Front stitch_modular_web_templates</h2>
+      <p class="text-slate-600">Inscription rapide a un programme nutrition avec verification JavaScript (test1 et test2).</p>
+    </section>
+
+    <section class="grid lg:grid-cols-2 gap-6">
+      <article class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="font-semibold text-lg mb-4">Formulaire Programme</h3>
+        <form id="programmeForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Nom complet</label>
+            <input id="nom" type="text" class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Email</label>
+            <input id="email" type="email" class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Objectif nutrition</label>
+            <select id="objectif" class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500" required>
+              <option value="">Choisir...</option>
+              <option>Perte de poids</option>
+              <option>Prise de masse</option>
+              <option>Maintenance</option>
+            </select>
+          </div>
+          <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2.5 rounded-lg">Valider</button>
+        </form>
+        <p id="formMessage" class="mt-4 text-sm"></p>
+      </article>
+
+      <article class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="font-semibold text-lg mb-4">Metrique avancee</h3>
+        <div class="space-y-5">
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span>Progression profil nutrition</span>
+              <span id="meterText">0%</span>
+            </div>
+            <div class="w-full h-4 rounded-full bg-slate-200 overflow-hidden">
+              <div id="meterBar" class="h-4 bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-500" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-sm text-slate-600 mb-2">Chronometre session (test2)</p>
+            <p id="chrono" class="text-3xl font-bold tracking-wider">00:00</p>
+            <div class="mt-3 flex gap-2">
+              <button id="startTimer" class="px-4 py-2 rounded-lg bg-slate-900 text-white">Start</button>
+              <button id="stopTimer" class="px-4 py-2 rounded-lg bg-slate-200">Stop</button>
+              <button id="resetTimer" class="px-4 py-2 rounded-lg bg-slate-200">Reset</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("programmeForm");
+    const message = document.getElementById("formMessage");
+    const meterBar = document.getElementById("meterBar");
+    const meterText = document.getElementById("meterText");
+
+    // test1: validation metier du formulaire
+    function test1Validation(nom, email, objectif) {
+      if (nom.trim().length < 3) return "Le nom doit contenir au moins 3 caracteres.";
+      if (!email.includes("@") || !email.includes(".")) return "Email invalide.";
+      if (!objectif) return "Veuillez selectionner un objectif.";
+      return "";
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const nom = document.getElementById("nom").value;
+      const email = document.getElementById("email").value;
+      const objectif = document.getElementById("objectif").value;
+
+      const erreur = test1Validation(nom, email, objectif);
+      if (erreur) {
+        message.textContent = erreur;
+        message.className = "mt-4 text-sm text-red-600";
+        return;
+      }
+
+      const completion = 100;
+      meterBar.style.width = completion + "%";
+      meterText.textContent = completion + "%";
+      message.textContent = "Inscription validee avec succes.";
+      message.className = "mt-4 text-sm text-emerald-700";
+    });
+
+    // test2: chronometre JS avance
+    const chrono = document.getElementById("chrono");
+    let timerId = null;
+    let seconds = 0;
+
+    function formatTime(totalSeconds) {
+      const min = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+      const sec = String(totalSeconds % 60).padStart(2, "0");
+      return min + ":" + sec;
+    }
+
+    function test2ChronoTick() {
+      seconds += 1;
+      chrono.textContent = formatTime(seconds);
+    }
+
+    document.getElementById("startTimer").addEventListener("click", function () {
+      if (timerId) return;
+      timerId = setInterval(test2ChronoTick, 1000);
+    });
+
+    document.getElementById("stopTimer").addEventListener("click", function () {
+      clearInterval(timerId);
+      timerId = null;
+    });
+
+    document.getElementById("resetTimer").addEventListener("click", function () {
+      clearInterval(timerId);
+      timerId = null;
+      seconds = 0;
+      chrono.textContent = "00:00";
+    });
+  </script>
+</body>
+</html>
