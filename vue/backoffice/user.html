@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<script>
+// Protection backoffice — vérifie session avant tout
+(function() {
+  document.documentElement.style.visibility = 'hidden';
+  fetch('../../controleur/frontoffice/UserControleur.php?action=check-session', {
+    credentials: 'same-origin'
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('Réponse invalide');
+    return r.json();
+  })
+  .then(function(res) {
+    if (!res.success || res.user.role !== 'admin') {
+      sessionStorage.setItem('adminRedirectMessage', 'Veuillez vous connecter.');
+      window.location.replace('login.php');
+      return;
+    }
+    document.documentElement.style.visibility = '';
+  })
+  .catch(function() {
+    sessionStorage.setItem('adminRedirectMessage', 'Veuillez vous connecter.');
+    window.location.replace('login.php');
+  });
+})();
+
+function adminLogout() {
+  if (!confirm('Voulez-vous vous déconnecter ?')) return;
+
+  fetch('../../controleur/frontoffice/UserControleur.php?action=logout', {
+    method: 'POST', credentials: 'same-origin'
+  }).finally(function() {
+    window.location.href = 'login.php';
+  });
+}
+</script>
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NutriNova Admin - User Management</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f7f9fb",
+                        "on-primary-container": "#003c0b",
+                        "secondary-fixed-dim": "#a2c9ff",
+                        "primary-fixed-dim": "#78dc77",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary-container": "#003663",
+                        "surface-variant": "#e0e3e5",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#becab9",
+                        "tertiary-fixed-dim": "#ffb1c7",
+                        "background": "#f7f9fb",
+                        "tertiary-container": "#f26f9d",
+                        "inverse-primary": "#78dc77",
+                        "on-tertiary-fixed-variant": "#861948",
+                        "on-primary-fixed": "#002204",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#006e1c",
+                        "outline": "#6f7a6b",
+                        "on-tertiary-fixed": "#3e001c",
+                        "primary-container": "#4caf50",
+                        "surface-dim": "#d8dadc",
+                        "tertiary": "#a63360",
+                        "surface-container": "#eceef0",
+                        "on-surface-variant": "#3f4a3c",
+                        "on-secondary-fixed": "#001c38",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffd9e2",
+                        "primary-fixed": "#94f990",
+                        "inverse-surface": "#2d3133",
+                        "primary": "#006e1c",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed-variant": "#005313",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#47a1ff",
+                        "on-tertiary-container": "#690034",
+                        "on-secondary-fixed-variant": "#004881",
+                        "surface-bright": "#f7f9fb",
+                        "secondary": "#0060a8",
+                        "secondary-fixed": "#d3e4ff",
+                        "on-background": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Manrope', sans-serif; }
+        
+        /* Styles pour affichage des erreurs de validation */
+        .error-message {
+            display: block !important;
+            visibility: visible !important;
+            color: #DC2626 !important;
+            font-size: 12px !important;
+            margin-top: 4px !important;
+            font-weight: bold !important;
+            position: static !important;
+        }
+        
+        input.error, select.error {
+            border-color: #DC2626 !important;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+        }
+    </style>
+
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="h-screen w-72 fixed left-0 top-0 overflow-y-auto bg-slate-50 dark:bg-slate-900 flex flex-col py-8 px-6 z-50">
+<div class="mb-10">
+<h1 class="text-2xl font-black text-green-700 dark:text-green-500 tracking-tight">NutriNova</h1>
+<p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">Admin Console</p>
+</div>
+<button class="mb-8 flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-secondary text-on-primary py-3 px-4 rounded-xl font-bold shadow-sm hover:scale-[1.02] transition-transform" id="add-user-btn" type="button">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>New Insight</span>
+</button>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-semibold">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#" onclick="showAdminSection('users'); return false;">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-semibold">User Management</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#" onclick="showAdminSection('nutrition'); return false;">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="text-sm font-semibold">Nutrition Management</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#" onclick="showAdminSection('shop'); return false;">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="text-sm font-semibold">Shop Management</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#" onclick="showAdminSection('forum'); return false;">
+<span class="material-symbols-outlined">forum</span>
+<span class="text-sm font-semibold">Community Management</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="text-sm font-semibold">Sport Coaching</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-200 dark:border-slate-800 space-y-1">
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-semibold">Settings</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200" href="login.php" onclick="event.preventDefault(); adminLogout();">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-sm font-semibold">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-72">
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-18rem)] h-20 bg-white/70 backdrop-blur-xl z-40 flex justify-between items-center px-12">
+<div class="flex items-center gap-6">
+<h2 class="text-xl font-bold text-blue-900 tracking-tight">Admin Dashboard</h2>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="bg-surface-container-high border-none rounded-full py-2.5 pl-12 pr-6 w-80 text-sm focus:ring-2 focus:ring-primary/20 transition-all" id="search-input" placeholder="Search members..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-slate-500 hover:text-blue-600 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+<button class="text-slate-500 hover:text-blue-600 transition-all">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border-2 border-surface-container-highest">
+<img alt="Administrator Profile" data-alt="Close-up portrait of a professional male administrator in a modern office setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdqyZcUAEldlb2PyYUDyTniob3ErEBtQP6eCYS_hNIHkAaReP7tZwBliu2M8nKpmjniuU-p8xdNqtMOU7YsZRkEmx7JwE8kCAIrlvZVKaVW3LIsSy8TdmRB3AB_kcSQklAz_e9NsLRwQhVQwtk2u0Bi6xCn0npqxStKp8AUCbCSkIFY1gAgnBPNu5wAt_QH49cMwfGAczX1EANb2YDzqopQRIORl-T9goHG-azA8rvnptOVmR7R9U05hy-EtJqb0O0Ydsthiqf8_PT"/>
+</div>
+</div>
+</header>
+<!-- Canvas Body -->
+<div class="pt-28 px-12 pb-12">
+
+<!-- ══ SECTION USERS (défaut) ════════════════════════════════════════════ -->
+<div id="admin-section-users">
+<!-- Bento Dashboard Header -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<!-- Total Users -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl flex flex-col gap-4 group hover:scale-[1.01] transition-transform duration-300">
+<div class="flex items-center justify-between">
+<div class="p-3 bg-secondary/10 rounded-2xl">
+<span class="material-symbols-outlined text-secondary">groups</span>
+</div>
+<span class="text-xs font-bold text-tertiary px-3 py-1 bg-tertiary/10 rounded-full">Insight</span>
+</div>
+<div>
+<p class="text-slate-500 text-sm font-medium">Total Users</p>
+<h3 class="text-4xl font-extrabold text-on-surface tracking-tight mt-1" id="stat-total-users">0</h3>
+</div>
+<div class="flex items-center gap-2 text-xs text-green-600 font-semibold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12% from last month</span>
+</div>
+</div>
+<!-- Active Users -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl flex flex-col gap-4 border-b-4 border-primary shadow-sm hover:scale-[1.01] transition-transform duration-300">
+<div class="flex items-center justify-between">
+<div class="p-3 bg-primary/10 rounded-2xl">
+<span class="material-symbols-outlined text-primary">person_check</span>
+</div>
+<div class="flex gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] font-bold text-primary uppercase">Live</span>
+</div>
+</div>
+<div>
+<p class="text-slate-500 text-sm font-medium">Active Users</p>
+<h3 class="text-4xl font-extrabold text-on-surface tracking-tight mt-1" id="stat-active-users">0</h3>
+</div>
+<div class="flex items-center gap-2 text-xs text-primary font-semibold">
+<span class="material-symbols-outlined text-sm">bolt</span>
+<span>Real-time Engagement</span>
+</div>
+</div>
+<!-- New Registrations -->
+<div class="bg-gradient-to-br from-primary to-secondary p-8 rounded-3xl flex flex-col gap-4 text-white hover:scale-[1.01] transition-transform duration-300">
+<div class="flex items-center justify-between">
+<div class="p-3 bg-white/20 backdrop-blur-md rounded-2xl">
+<span class="material-symbols-outlined text-white">person_add</span>
+</div>
+</div>
+<div>
+<p class="text-white/80 text-sm font-medium">New Registrations</p>
+<h3 class="text-4xl font-extrabold tracking-tight mt-1" id="stat-new-users">0</h3>
+</div>
+<div class="flex items-center gap-2 text-xs font-semibold">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>In the last 24 hours</span>
+</div>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm">
+<div class="px-8 py-6 flex items-center justify-between border-b border-surface-container-high">
+<h3 class="text-xl font-bold text-on-surface">User Directory</h3>
+<div class="flex gap-3">
+<button class="bg-surface-container-high text-on-surface-variant px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-surface-container-highest transition-colors flex items-center gap-2" id="reload-users-btn" type="button">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                            Filter
+                        </button>
+<button class="bg-primary-container text-on-primary-container px-5 py-2.5 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity flex items-center gap-2" id="export-users-btn" type="button">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Export CSV
+                        </button>
+</div>
+</div>
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50 text-slate-500">
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">ID</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Nom</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Prenom</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Email</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Mot de passe</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Taille</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Poids</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Objectif</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Niveau</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Inscription</th>
+<th class="py-5 px-4 text-xs font-bold uppercase tracking-widest">Statut</th>
+<th class="py-5 px-8 text-xs font-bold uppercase tracking-widest text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high" id="users-table-body">
+<tr>
+<td class="py-5 px-8 text-sm text-slate-500" colspan="12">Chargement des utilisateurs...</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-8 py-6 bg-surface-container-low/20 flex items-center justify-between">
+<span class="text-sm text-slate-500" id="users-count-label">Showing 0 users</span>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-surface-container-high text-slate-400 hover:bg-white transition-colors" disabled type="button">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold shadow-md shadow-primary/20" id="page-indicator" type="button">1</button>
+<button class="hidden w-10 h-10 items-center justify-center rounded-xl border border-surface-container-high text-slate-600 hover:bg-white transition-colors font-semibold" type="button">2</button>
+<button class="hidden w-10 h-10 items-center justify-center rounded-xl border border-surface-container-high text-slate-600 hover:bg-white transition-colors font-semibold" type="button">3</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-surface-container-high text-slate-400 hover:bg-white transition-colors" disabled type="button">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Contextual Insight Panel -->
+<div class="mt-12 p-8 bg-surface-container-low rounded-3xl relative overflow-hidden">
+<div class="relative z-10 max-w-2xl">
+<span class="bg-tertiary text-white text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded mb-3 inline-block">AI Insight</span>
+<h4 class="text-2xl font-bold text-on-surface mb-4">Registration Velocity is peaking</h4>
+<p class="text-slate-600 leading-relaxed">Your user acquisition rate has increased by <span class="text-primary font-bold">14.2%</span> over the last 72 hours. Most new registrations are originating from the "Healthy Breakfast" community segment.</p>
+</div>
+<!-- Glassmorphic Decorative Element -->
+<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-gradient-to-tr from-primary/20 to-secondary/20 rounded-full blur-3xl opacity-50"></div>
+<div class="absolute right-12 top-1/2 -translate-y-1/2 hidden lg:block">
+<div class="w-32 h-32 rounded-2xl bg-white/40 backdrop-blur-md border border-white/50 shadow-xl flex items-center justify-center rotate-12">
+<span class="material-symbols-outlined text-5xl text-primary" style="font-variation-settings: 'FILL' 1;">insights</span>
+</div>
+</div>
+</div>
+</div>
+</div><!-- /admin-section-users -->
+
+<!-- ══ SECTION FORUM ═══════════════════════════════════════════════════════ -->
+<div id="admin-section-forum" style="display:none">
+  <div class="mb-10">
+    <span class="text-tertiary font-semibold text-sm tracking-wider uppercase">Community Hub</span>
+    <h2 class="text-4xl font-extrabold font-headline text-on-surface mt-2 tracking-tight">Community Management</h2>
+    <p class="text-on-surface-variant mt-2 max-w-2xl text-lg">Manage published posts and community discussions.</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    <div class="bg-surface-container-lowest p-8 rounded-xl">
+      <div class="flex justify-between items-start">
+        <div class="p-3 bg-primary/10 rounded-xl">
+          <span class="material-symbols-outlined text-primary text-3xl">article</span>
+        </div>
+        <span class="text-primary text-xs font-bold bg-primary/10 px-2 py-1 rounded-full">Active</span>
+      </div>
+      <div class="mt-6">
+        <p class="text-sm font-medium text-on-surface-variant">Published Posts</p>
+        <h3 class="text-4xl font-black text-on-surface mt-1" id="forum-stat-posts">—</h3>
+      </div>
+    </div>
+    <div class="bg-surface-container-lowest p-8 rounded-xl">
+      <div class="flex justify-between items-start">
+        <div class="p-3 bg-secondary/10 rounded-xl">
+          <span class="material-symbols-outlined text-secondary text-3xl">people</span>
+        </div>
+        <span class="text-secondary text-xs font-bold bg-secondary/10 px-2 py-1 rounded-full">Community</span>
+      </div>
+      <div class="mt-6">
+        <p class="text-sm font-medium text-on-surface-variant">Community Members</p>
+        <h3 class="text-4xl font-black text-on-surface mt-1" id="forum-stat-members">—</h3>
+      </div>
+    </div>
+    <div class="bg-surface-container-lowest p-8 rounded-xl">
+      <div class="flex justify-between items-start">
+        <div class="p-3 bg-tertiary/10 rounded-xl">
+          <span class="material-symbols-outlined text-tertiary text-3xl">calendar_today</span>
+        </div>
+        <span class="text-tertiary text-xs font-bold bg-tertiary/10 px-2 py-1 rounded-full">Recent</span>
+      </div>
+      <div class="mt-6">
+        <p class="text-sm font-medium text-on-surface-variant">Posts This Week</p>
+        <h3 class="text-4xl font-black text-on-surface mt-1" id="forum-stat-week">—</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Published Posts Table -->
+  <div class="bg-surface-container-lowest rounded-xl p-8">
+    <h3 class="text-2xl font-bold mb-6">Published Posts</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full" id="forum-posts-table">
+        <thead>
+          <tr class="border-b border-surface-variant">
+            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Post ID</th>
+            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Title</th>
+            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Author</th>
+            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Content Preview</th>
+            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Comments</th>
+            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Created Date</th>
+            <th class="text-left px-4 py-3 text-sm font-semibold text-on-surface-variant">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="forum-posts-tbody">
+          <tr><td colspan="7" class="py-6 px-4 text-sm text-slate-500">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal édition post admin -->
+  <div id="admin-edit-post-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:16px;padding:32px;width:100%;max-width:520px;position:relative">
+      <button onclick="closeAdminEditPost()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:1.4rem;cursor:pointer">✕</button>
+      <h3 style="margin:0 0 20px;font-size:1.1rem;font-weight:700">Modifier le post</h3>
+      <input type="hidden" id="admin-edit-post-id">
+      <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:4px">Titre</label>
+      <input type="text" id="admin-edit-post-title" style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:9px 12px;font-size:.95rem;box-sizing:border-box;margin-bottom:14px">
+      <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:4px">Contenu</label>
+      <textarea id="admin-edit-post-content" rows="5" style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:9px 12px;font-size:.95rem;box-sizing:border-box;resize:vertical"></textarea>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px">
+        <button onclick="closeAdminEditPost()" style="padding:9px 20px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;background:#fff">Annuler</button>
+        <button onclick="saveAdminEditPost()" style="padding:9px 20px;border:none;border-radius:8px;background:#4CAF50;color:#fff;font-weight:700;cursor:pointer">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal édition commentaire admin -->
+  <div id="admin-edit-comment-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:16px;padding:32px;width:100%;max-width:520px;position:relative">
+      <button onclick="closeAdminEditComment()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:1.4rem;cursor:pointer">✕</button>
+      <h3 style="margin:0 0 20px;font-size:1.1rem;font-weight:700">Modifier le commentaire</h3>
+      <input type="hidden" id="admin-edit-comment-id">
+      <input type="hidden" id="admin-edit-comment-post-id">
+      <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:4px">Auteur</label>
+      <input type="text" id="admin-edit-comment-author" disabled style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:9px 12px;font-size:.95rem;box-sizing:border-box;margin-bottom:14px;background:#f5f5f5">
+      <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:4px">Contenu</label>
+      <textarea id="admin-edit-comment-content" rows="4" style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:9px 12px;font-size:.95rem;box-sizing:border-box;resize:vertical"></textarea>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px">
+        <button onclick="closeAdminEditComment()" style="padding:9px 20px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;background:#fff">Annuler</button>
+        <button onclick="saveAdminEditComment()" style="padding:9px 20px;border:none;border-radius:8px;background:#4CAF50;color:#fff;font-weight:700;cursor:pointer">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div><!-- /admin-section-forum -->
+
+<!-- ═══════ SECTION : SHOP MANAGEMENT ═══════ -->
+<div id="admin-section-shop" style="display:none">
+  <!-- Header -->
+  <div class="mb-8 flex flex-wrap justify-between items-end gap-4">
+    <div>
+      <span class="text-xs font-bold uppercase tracking-widest text-pink-500">E-Commerce</span>
+      <h2 class="text-3xl font-black text-slate-800 dark:text-white mt-1">Boutique Console</h2>
+    </div>
+    <div class="flex items-center gap-3 flex-wrap">
+      <!-- Recherche commandes -->
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+        <input id="shop-order-search" type="text" placeholder="Rechercher un client..."
+          class="pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border-none rounded-full text-sm w-56 focus:ring-2 focus:ring-green-400/30 text-slate-800 dark:text-white"
+          oninput="handleShopOrderSearch(this.value)" onkeydown="handleShopOrderSearchKeyDown(event)">
+        <p id="shop-search-msg" class="mt-1 text-xs text-slate-500 hidden absolute left-0 whitespace-nowrap"></p>
+      </div>
+      <button onclick="openAdminAddProduct()" class="py-2 px-4 rounded-xl bg-gradient-to-r from-green-600 to-blue-600 text-white font-bold flex items-center gap-2 hover:scale-[1.02] transition-transform">
+        <span class="material-symbols-outlined">add_box</span> Ajouter un produit
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats 4 cards -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm">
+      <p class="text-xs text-slate-500 font-medium">Revenue Total</p>
+      <h3 id="shop-stat-revenue" class="text-2xl font-black text-slate-800 dark:text-white mt-1">0,00€</h3>
+      <div class="flex items-center gap-1 mt-2 text-green-600 text-xs font-bold">
+        <span class="material-symbols-outlined text-sm">payments</span> Profit confirmé
+      </div>
+    </div>
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm">
+      <p class="text-xs text-slate-500 font-medium">Commandes</p>
+      <h3 id="shop-stat-orders" class="text-2xl font-black text-slate-800 dark:text-white mt-1">0</h3>
+      <div class="flex items-center gap-1 mt-2 text-blue-600 text-xs font-bold">
+        <span class="material-symbols-outlined text-sm">inventory_2</span> Confirmées
+      </div>
+    </div>
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm">
+      <p class="text-xs text-slate-500 font-medium">Produits</p>
+      <h3 id="shop-stat-products" class="text-2xl font-black text-slate-800 dark:text-white mt-1">0</h3>
+      <div class="flex items-center gap-1 mt-2 text-purple-600 text-xs font-bold">
+        <span class="material-symbols-outlined text-sm">shopping_bag</span> En catalogue
+      </div>
+    </div>
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm">
+      <p class="text-xs text-slate-500 font-medium">Ventes (items)</p>
+      <h3 id="shop-stat-items" class="text-2xl font-black text-slate-800 dark:text-white mt-1">0</h3>
+      <div class="flex items-center gap-1 mt-2 text-orange-500 text-xs font-bold">
+        <span class="material-symbols-outlined text-sm">sell</span> Unités vendues
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart + popular -->
+  <div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm mb-8">
+    <div class="flex justify-between items-center mb-4">
+      <div>
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white">Top 3 Produits Populaires</h3>
+        <p class="text-xs text-slate-500">Basé sur les commandes confirmées</p>
+      </div>
+      <span class="text-xs font-semibold text-slate-500 bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full">Top 3</span>
+    </div>
+    <canvas id="shop-popular-chart" style="max-height:260px;min-height:200px;"></canvas>
+    <p id="shop-popular-empty" class="mt-3 text-sm text-slate-500 hidden text-center">Aucune commande confirmée. Le graphique apparaîtra dès que des clients passeront des commandes.</p>
+    <div class="mt-4 grid grid-cols-2 gap-3">
+      <div class="rounded-lg bg-slate-50 dark:bg-slate-700 p-3">
+        <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Unités vendues</p>
+        <p id="shop-popular-units" class="text-xl font-black text-slate-800 dark:text-white mt-1">0</p>
+      </div>
+      <div class="rounded-lg bg-slate-50 dark:bg-slate-700 p-3">
+        <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Revenue top items</p>
+        <p id="shop-popular-revenue" class="text-xl font-black text-slate-800 dark:text-white mt-1">0,00€</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Table -->
+  <div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm mb-8">
+    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-4">Inventaire Produits</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="border-b border-slate-200 dark:border-slate-700">
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400">ID</th>
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400">Produit</th>
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400">Catégorie</th>
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400 text-right">Prix</th>
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="shop-products-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm">
+    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-4">Commandes Récentes</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="border-b border-slate-200 dark:border-slate-700">
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400">ID</th>
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400">Client</th>
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400">Téléphone</th>
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400 text-right">Total</th>
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400 text-right">Date</th>
+            <th class="pb-3 text-xs uppercase tracking-widest font-bold text-slate-400 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="shop-orders-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add/Edit Product Modal -->
+  <div id="admin-product-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;padding:32px;width:100%;max-width:480px;position:relative;">
+      <h3 id="admin-product-modal-title" style="margin:0 0 20px;font-size:1.2rem;font-weight:700;">Ajouter un produit</h3>
+      <input type="hidden" id="admin-product-id">
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:.85rem;font-weight:600;margin-bottom:4px;">Nom *</label>
+        <input id="admin-product-nom" type="text" style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:.95rem;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:.85rem;font-weight:600;margin-bottom:4px;">Prix (€) *</label>
+        <input id="admin-product-prix" type="number" step="0.01" min="0.01" max="200" style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:.95rem;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:.85rem;font-weight:600;margin-bottom:4px;">Description</label>
+        <textarea id="admin-product-desc" rows="3" style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:.95rem;box-sizing:border-box;resize:vertical;"></textarea>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:.85rem;font-weight:600;margin-bottom:4px;">Catégorie</label>
+        <select id="admin-product-cat" style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:.95rem;box-sizing:border-box;">
+          <option value="bio">Bio & Local</option>
+          <option value="complement" selected>Complément</option>
+          <option value="sport">Sport</option>
+          <option value="accessoire">Accessoire</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+        <button onclick="closeAdminProductModal()" style="padding:9px 20px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;">Annuler</button>
+        <button onclick="saveAdminProduct()" style="padding:9px 20px;border:none;border-radius:8px;background:#4CAF50;color:#fff;font-weight:700;cursor:pointer;">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div><!-- /admin-section-shop -->
+
+<!-- ═══════ NUTRITION MANAGEMENT SECTION ═══════ -->
+<div id="admin-section-nutrition" style="display:none">
+  <!-- Stats -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+      <div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-green-500">restaurant_menu</span><span class="text-sm text-slate-500">Total repas</span></div>
+      <p id="nut-stat-meals" class="text-3xl font-black">0</p>
+    </div>
+    <div class="rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+      <div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-amber-500">free_breakfast</span><span class="text-sm text-slate-500">Petit-déjeuner</span></div>
+      <p id="nut-stat-breakfast" class="text-3xl font-black">0</p>
+    </div>
+    <div class="rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+      <div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-blue-500">grocery</span><span class="text-sm text-slate-500">Ingrédients</span></div>
+      <p id="nut-stat-ingredients" class="text-3xl font-black">0</p>
+    </div>
+    <div class="rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+      <div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-yellow-500">star</span><span class="text-sm text-slate-500">Note moyenne</span></div>
+      <p id="nut-stat-rating" class="text-3xl font-black">0</p>
+    </div>
+  </div>
+
+  <!-- Sub tabs: Meals / Ingredients -->
+  <div class="flex gap-3 mb-6">
+    <button onclick="showNutritionSubTab('meals')" id="nut-tab-meals-btn" class="px-5 py-2 rounded-lg font-semibold text-sm bg-green-600 text-white">Repas</button>
+    <button onclick="showNutritionSubTab('ingredients')" id="nut-tab-ingredients-btn" class="px-5 py-2 rounded-lg font-semibold text-sm bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Ingrédients</button>
+  </div>
+
+  <!-- Meals Tab -->
+  <div id="nut-sub-meals">
+    <div class="flex items-center justify-between mb-4">
+      <input type="search" id="nut-meal-search" placeholder="Rechercher un repas…" class="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-sm w-64" oninput="filterAdminMeals()">
+      <button onclick="openNutritionMealModal()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 text-white font-semibold text-sm hover:bg-green-700"><span class="material-symbols-outlined text-base">add</span> Ajouter un repas</button>
+    </div>
+    <div class="rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 dark:bg-slate-700">
+          <tr>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500">Image</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500 cursor-pointer" onclick="sortAdminMeals('nom')">Nom ↕</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500 cursor-pointer" onclick="sortAdminMeals('type')">Type ↕</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500 cursor-pointer" onclick="sortAdminMeals('calories')">Cal ↕</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500">P / G / L</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="nut-meals-tbody"></tbody>
+      </table>
+    </div>
+    <div id="nut-meals-pagination" class="flex items-center justify-center gap-2 mt-4"></div>
+  </div>
+
+  <!-- Ingredients Tab -->
+  <div id="nut-sub-ingredients" style="display:none">
+    <div class="flex items-center justify-between mb-4">
+      <input type="search" id="nut-ing-search" placeholder="Rechercher un ingrédient…" class="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-sm w-64" oninput="filterAdminIngredients()">
+      <button onclick="openNutritionIngModal()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 text-white font-semibold text-sm hover:bg-green-700"><span class="material-symbols-outlined text-base">add</span> Ajouter un ingrédient</button>
+    </div>
+    <div class="rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 dark:bg-slate-700">
+          <tr>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500">Nom</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500">Cal</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500">P / G / L</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500">Eco</th>
+            <th class="text-left px-4 py-3 font-semibold text-slate-500">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="nut-ing-tbody"></tbody>
+      </table>
+    </div>
+    <div id="nut-ing-pagination" class="flex items-center justify-center gap-2 mt-4"></div>
+  </div>
+
+  <!-- Meal Modal -->
+  <div id="nut-meal-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4">
+    <div class="w-full max-w-2xl rounded-3xl bg-white dark:bg-slate-800 shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-slate-700">
+        <h3 id="nut-meal-modal-title" class="text-xl font-bold">Ajouter un repas</h3>
+        <button onclick="closeNutritionMealModal()" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="px-6 py-5 space-y-4 max-h-[75vh] overflow-y-auto">
+        <input type="hidden" id="nut-meal-id">
+        <div><label class="block text-sm font-semibold mb-1">Nom *</label><input type="text" id="nut-meal-nom" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2 text-sm"></div>
+        <div><label class="block text-sm font-semibold mb-1">Type *</label>
+          <select id="nut-meal-type" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2 text-sm">
+            <option value="petit déjeuner">Petit déjeuner</option>
+            <option value="déjeuner">Déjeuner</option>
+            <option value="dîner">Dîner</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-4 gap-3">
+          <div><label class="block text-sm font-semibold mb-1">Calories</label><input type="number" id="nut-meal-cal" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm" min="0" step="0.1"></div>
+          <div><label class="block text-sm font-semibold mb-1">Protéines</label><input type="number" id="nut-meal-prot" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm" min="0" step="0.1"></div>
+          <div><label class="block text-sm font-semibold mb-1">Glucides</label><input type="number" id="nut-meal-carb" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm" min="0" step="0.1"></div>
+          <div><label class="block text-sm font-semibold mb-1">Lipides</label><input type="number" id="nut-meal-fat" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm" min="0" step="0.1"></div>
+        </div>
+        <div><label class="block text-sm font-semibold mb-1">Image</label><input type="file" id="nut-meal-image" accept="image/*" class="w-full text-sm"></div>
+        <!-- Ingredient management panel -->
+        <div id="nut-meal-ingredients-panel" style="display:none">
+          <label class="block text-sm font-semibold mb-2">Ingrédients du repas</label>
+          <div id="nut-meal-ing-list" class="space-y-2 mb-3"></div>
+          <div class="flex gap-2">
+            <select id="nut-meal-ing-select" class="flex-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm"></select>
+            <input type="number" id="nut-meal-ing-qty" class="w-20 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm" value="1" min="0.1" step="0.1" placeholder="Qté">
+            <button onclick="addIngredientToMeal()" class="px-3 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold">+ Ajouter</button>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+        <button onclick="closeNutritionMealModal()" class="px-5 py-2 rounded-lg border border-slate-300 text-sm font-semibold">Annuler</button>
+        <button onclick="saveNutritionMeal()" class="px-5 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold hover:bg-green-700">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ingredient Modal -->
+  <div id="nut-ing-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-800 shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-slate-700">
+        <h3 id="nut-ing-modal-title" class="text-xl font-bold">Ajouter un ingrédient</h3>
+        <button onclick="closeNutritionIngModal()" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <input type="hidden" id="nut-ing-id">
+        <div><label class="block text-sm font-semibold mb-1">Nom *</label><input type="text" id="nut-ing-nom" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2 text-sm"></div>
+        <div class="grid grid-cols-4 gap-3">
+          <div><label class="block text-sm font-semibold mb-1">Cal</label><input type="number" id="nut-ing-cal" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm" min="0" step="0.1"></div>
+          <div><label class="block text-sm font-semibold mb-1">Prot</label><input type="number" id="nut-ing-prot" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm" min="0" step="0.1"></div>
+          <div><label class="block text-sm font-semibold mb-1">Gluc</label><input type="number" id="nut-ing-carb" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm" min="0" step="0.1"></div>
+          <div><label class="block text-sm font-semibold mb-1">Lip</label><input type="number" id="nut-ing-fat" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm" min="0" step="0.1"></div>
+        </div>
+        <div><label class="block text-sm font-semibold mb-1">Eco-score</label><input type="text" id="nut-ing-eco" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2 text-sm" placeholder="A, B, C…"></div>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+        <button onclick="closeNutritionIngModal()" class="px-5 py-2 rounded-lg border border-slate-300 text-sm font-semibold">Annuler</button>
+        <button onclick="saveNutritionIngredient()" class="px-5 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold hover:bg-green-700">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div><!-- /admin-section-nutrition -->
+
+</div><!-- /pt-28 px-12 pb-12 -->
+</main>
+
+<!-- ═══════ ORDER DETAILS MODAL ═══════ -->
+<div id="shop-order-details-modal" class="hidden fixed inset-0 z-[9998] flex items-center justify-center bg-black/40 p-4">
+  <div class="w-full max-w-2xl rounded-3xl bg-white dark:bg-slate-800 shadow-2xl overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-slate-700">
+      <div>
+        <p id="shop-od-customer" class="text-sm text-slate-500 dark:text-slate-400"></p>
+        <h3 class="text-xl font-bold text-slate-800 dark:text-white">Détails de la commande</h3>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="shopConfirmDeleteOrder()" class="rounded-full border border-red-200 bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-4 py-2 text-sm font-semibold hover:bg-red-100 transition flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">delete</span> Supprimer
+        </button>
+        <button onclick="closeShopOrderDetails()" class="text-slate-400 hover:text-slate-700 dark:hover:text-white transition">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+    </div>
+    <div class="px-6 py-5 space-y-4 max-h-[75vh] overflow-y-auto">
+      <!-- Items -->
+      <div class="rounded-2xl bg-slate-50 dark:bg-slate-700/50 p-4">
+        <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-3">Articles commandés</p>
+        <div id="shop-od-items" class="space-y-2"></div>
+      </div>
+      <!-- Info -->
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="rounded-2xl bg-slate-50 dark:bg-slate-700/50 p-4">
+          <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Total</p>
+          <p id="shop-od-total" class="mt-1 text-2xl font-black text-slate-800 dark:text-white">0,00€</p>
+        </div>
+        <div class="rounded-2xl bg-slate-50 dark:bg-slate-700/50 p-4">
+          <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Téléphone</p>
+          <p id="shop-od-phone" class="mt-1 text-lg font-semibold text-slate-700 dark:text-slate-200">-</p>
+        </div>
+      </div>
+      <div class="rounded-2xl bg-slate-50 dark:bg-slate-700/50 p-4">
+        <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Adresse de livraison</p>
+        <p id="shop-od-address" class="mt-1 text-sm text-slate-700 dark:text-slate-300"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded hidden z-50"></div>
+<script src="user1.js"></script>
+
+
+</body></html>
